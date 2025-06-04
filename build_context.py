@@ -13,17 +13,18 @@ import pathspec
 import tiktoken
 
 # --- Constants & Defaults ---
+SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_MAX_TOTAL_TOKENS = 12000
-DEFAULT_MAX_FILE_TOKENS = 2000
+DEFAULT_MAX_FILE_TOKENS = 5000
 DEFAULT_MAX_FILE_SIZE_MB = 1
-DEFAULT_OUTPUT_FILE = "context.txt"
-DEFAULT_MESSAGE_FILE = "gptcontext_message.txt"
 DEFAULT_BASE_DIR = "."
-DEFAULT_CONFIG_FILE = "context_config.json"
-MESSAGE_TEMPLATE_FILE = "message_sample.txt"
-CACHE_DIR = Path(".context-cache")
+DEFAULT_CONFIG_FILE = "config.json"
+DEFAULT_CONTEXT_OUTPUT = ".gptcontext.txt"
+DEFAULT_MESSAGE_OUTPUT = ".gptcontext_message.txt"
+DEFAULT_OPENAI_MODEL = "gpt-3.5-turbo-0125"
 ENCODING_NAME = "cl100k_base"
-OPENAI_MODEL = "gpt-4-turbo"
+MESSAGE_TEMPLATE_FILE = SCRIPT_DIR / "message_sample.txt"
+
 DEFAULT_CONFIG_INCLUDE_EXTS = {
     ".py", ".md", ".js", ".ts", ".jsx", ".tsx", ".json", ".toml", ".yaml", ".yml",
     ".html", ".css", ".scss", ".sass", ".less", ".java", ".go", ".rs", ".cpp", ".c",
@@ -33,11 +34,13 @@ DEFAULT_CONFIG_INCLUDE_EXTS = {
 
 DEFAULT_CONFIG_EXCLUDE_DIRS = {
     ".git", ".svn", ".hg", "node_modules", "__pycache__", "dist", "build", ".venv",
-    "env", ".mypy_cache", ".pytest_cache", ".vscode", ".idea", ".context-cache",
+    "env", ".mypy_cache", ".pytest_cache", ".vscode", ".idea", ".gptcontext-cache",
     ".DS_Store", "__snapshots__", ".coverage", ".cache"
 }
-
-CACHE_DIR.mkdir(exist_ok=True)
+DEFAULT_CONFIG_EXCLUDE_FILES = {
+    ".gptcontext.txt", ".gptcontext_message.txt", "README.md", "CHANGELOG.md",
+    "LICENSE", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md", "SECURITY.md"
+}
 
 enc = tiktoken.get_encoding(ENCODING_NAME)
 
@@ -57,15 +60,38 @@ def is_ignored(filepath: str, spec: pathspec.PathSpec | None) -> bool:
     return spec and spec.match_file(filepath)  # type: ignore
 
 
-def load_config(config_path: Path) -> tuple[set[str], set[str]]:
+def load_config(config_path: Path) -> tuple[set[str], set[str], set[str], str, str, int, str]:
     if not config_path.exists():
         print(f"Warning: {config_path} not found. Using default config.")
-        return DEFAULT_CONFIG_INCLUDE_EXTS, DEFAULT_CONFIG_EXCLUDE_DIRS
+        return (
+            DEFAULT_CONFIG_INCLUDE_EXTS,
+            DEFAULT_CONFIG_EXCLUDE_DIRS,
+            DEFAULT_CONFIG_EXCLUDE_FILES,
+            DEFAULT_CONTEXT_OUTPUT,
+            DEFAULT_MESSAGE_OUTPUT,
+            DEFAULT_MAX_FILE_TOKENS,
+            DEFAULT_OPENAI_MODEL,
+        )
 
     config = json.loads(config_path.read_text())
     include_exts = set(config.get("include_extensions", []))
     exclude_dirs = set(config.get("exclude_dirs", []))
-    return include_exts, exclude_dirs
+    exclude_files = set(config.get("exclude_files", []))
+
+    context_output = config.get("context_output", DEFAULT_CONTEXT_OUTPUT)
+    message_output = config.get("message_output", DEFAULT_MESSAGE_OUTPUT)
+    file_token_threshold = config.get("file_token_threshold", DEFAULT_MAX_FILE_TOKENS)
+    openai_model = config.get("openai_model", DEFAULT_OPENAI_MODEL)
+
+    return (
+        include_exts,
+        exclude_dirs,
+        exclude_files,
+        context_output,
+        message_output,
+        file_token_threshold,
+        openai_model,
+    )
 
 
 def list_relevant_files(
@@ -73,11 +99,15 @@ def list_relevant_files(
     gitignore_spec: pathspec.PathSpec | None,
     include_exts: set[str],
     exclude_dirs: set[str],
+    exclude_files: set[str],
+    output_files_to_skip: set[str],
 ) -> list[Path]:
     files = []
     for root, dirs, filenames in os.walk(base_path):
         dirs[:] = [d for d in dirs if d not in exclude_dirs]
         for name in filenames:
+            if name in output_files_to_skip or name in exclude_files:
+                continue
             ext = Path(name).suffix
             full_path = Path(root) / name
             rel_path = full_path.relative_to(base_path)
@@ -87,7 +117,7 @@ def list_relevant_files(
     return sorted(files, key=lambda f: f.stat().st_size)
 
 
-def summarize_text(text: str, rel_path: str) -> str:
+def summarize_text(text: str, rel_path: str, model: str, cache_dir: Path) -> str:
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         print("Error: OPENAI_API_KEY not set. Skipping summarization.")
@@ -106,7 +136,7 @@ def summarize_text(text: str, rel_path: str) -> str:
 
     try:
         response = openai.chat.completions.create(
-            model=OPENAI_MODEL,
+            model=model,
             messages=[{"role": "user", "content": prompt + truncated}],
             temperature=0.2,
         )
@@ -116,12 +146,12 @@ def summarize_text(text: str, rel_path: str) -> str:
         return "[Summary unavailable due to error]"
 
 
-def get_cached_summary(text: str, rel_path: str) -> str:
+def get_cached_summary(text: str, rel_path: str, model: str, cache_dir: Path) -> str:
     digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
-    cache_file = CACHE_DIR / f"{digest}.txt"
+    cache_file = cache_dir / f"{digest}.txt"
     if cache_file.exists():
         return cache_file.read_text()
-    summary = summarize_text(text, rel_path)
+    summary = summarize_text(text, rel_path, model, cache_dir)
     cache_file.write_text(summary)
     return summary
 
@@ -133,12 +163,24 @@ def build_context(
     max_file_tokens: int,
     include_exts: set[str],
     exclude_dirs: set[str],
+    exclude_files: set[str],
+    context_filename: str,
+    message_filename: str,
+    model: str,
+    cache_dir: Path,
 ) -> str:
     gitignore = load_gitignore(base_path)
     tokens_used = 0
     parts: list[str] = []
 
-    files = list_relevant_files(base_path, gitignore, include_exts, exclude_dirs)
+    files = list_relevant_files(
+        base_path,
+        gitignore,
+        include_exts,
+        exclude_dirs,
+        exclude_files,
+        output_files_to_skip={context_filename, message_filename},
+    )
     print(f"✓ Found {len(files)} relevant files")
 
     for path in files:
@@ -153,7 +195,7 @@ def build_context(
 
         if tokens > max_file_tokens:
             if summarize_large:
-                summary = get_cached_summary(content, str(rel_path))
+                summary = get_cached_summary(content, str(rel_path), model, cache_dir)
                 stokens = file_token_count(summary)
                 if tokens_used + stokens <= max_tokens:
                     parts.append(f"\n# Summary of {rel_path}\n{summary}")
@@ -171,15 +213,14 @@ def build_context(
     return "\n".join(parts)
 
 
-def write_message_template(context: str, message_file: Path):
-    template_path = Path(MESSAGE_TEMPLATE_FILE)
-    if not template_path.exists():
+def write_message_template(context: str, message_path: Path):
+    if not MESSAGE_TEMPLATE_FILE.exists():
         print(
             f"Warning: {MESSAGE_TEMPLATE_FILE} not found. Skipping message generation."
         )
         return
 
-    raw_template = template_path.read_text(encoding="utf-8")
+    raw_template = MESSAGE_TEMPLATE_FILE.read_text(encoding="utf-8")
     template = Template(raw_template)
 
     try:
@@ -188,8 +229,8 @@ def write_message_template(context: str, message_file: Path):
         print(f"Template substitution failed: missing key {e}")
         return
 
-    message_file.write_text(message, encoding="utf-8")
-    print(f"✓ Generated full ChatGPT message at {message_file}")
+    message_path.write_text(message, encoding="utf-8")
+    print(f"✓ Generated full ChatGPT message at {message_path}")
 
 
 def main():
@@ -198,45 +239,61 @@ def main():
     parser.add_argument(
         "--file-token-threshold",
         type=int,
-        default=DEFAULT_MAX_FILE_TOKENS,
         help="Token threshold after which a file is summarized",
     )
     parser.add_argument(
         "--summarize", action="store_true", help="Summarize large files with OpenAI"
     )
-    parser.add_argument("--output", type=str, default=DEFAULT_OUTPUT_FILE)
     parser.add_argument("--base", type=str, default=DEFAULT_BASE_DIR)
     parser.add_argument(
-        "--config",
-        type=str,
-        default=DEFAULT_CONFIG_FILE,
-        help="Path to JSON config with include/exclude settings",
+        "--config", type=str, default=DEFAULT_CONFIG_FILE, help="Path to config JSON"
     )
     parser.add_argument(
         "--generate-message",
         action="store_true",
-        help="Output a full ChatGPT message using message_sample.txt",
+        help="Create full ChatGPT message file",
     )
     args = parser.parse_args()
 
     base_path = Path(args.base).resolve()
-    include_exts, exclude_dirs = load_config(Path(args.config).resolve())
+    config_path = base_path / args.config
+
+    (
+        include_exts,
+        exclude_dirs,
+        exclude_files,
+        context_filename,
+        message_filename,
+        config_token_threshold,
+        openai_model,
+    ) = load_config(config_path)
+
+    file_token_threshold = args.file_token_threshold or config_token_threshold
+    cache_dir = base_path / ".gptcontext-cache"
+
+    if args.summarize:
+        cache_dir.mkdir(exist_ok=True)
 
     context = build_context(
         base_path,
         args.max_tokens,
         args.summarize,
-        args.file_token_threshold,
+        file_token_threshold,
         include_exts,
         exclude_dirs,
+        exclude_files,
+        context_filename,
+        message_filename,
+        openai_model,
+        cache_dir,
     )
-    output_path = Path(args.output).resolve()
-    output_path.write_text(context, encoding="utf-8")
 
+    output_path = base_path / context_filename
+    output_path.write_text(context, encoding="utf-8")
     print(f"\nWrote {output_path} with {file_token_count(context)} tokens.")
 
     if args.generate_message:
-        message_path = Path(DEFAULT_MESSAGE_FILE).resolve()
+        message_path = base_path / message_filename
         write_message_template(context, message_path)
 
 

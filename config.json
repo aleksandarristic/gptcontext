@@ -12,5 +12,10 @@
     "dist", "build", ".venv", "env", ".mypy_cache", ".pytest_cache",
     ".vscode", ".idea", ".context-cache", ".DS_Store", "__snapshots__",
     ".coverage", ".cache"
-  ]
+  ],
+  "exclude_files": [".gptcontext.txt", ".gptcontext_message.txt", "README.md", "CHANGELOG.md", "LICENSE", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md", "SECURITY.md"],
+  "context_output": ".gptcontext.txt",
+  "message_output": ".gptcontext_message.txt",
+  "file_token_threshold": 5000,
+  "openai_model": "gpt-3.5-turbo-0125"
 }
