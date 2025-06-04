@@ -119,12 +119,6 @@ class ConfigManager:
 _config_manager: Optional[ConfigManager] = None
 
 
-def init_config(base_path: Optional[Path] = None) -> None:
-    """Initialize the global config manager with the given base path."""
-    global _config_manager
-    _config_manager = ConfigManager(base_path)
-
-
 def get_config() -> ConfigManager:
     """Get the global config manager instance."""
     if _config_manager is None:
