@@ -2,4 +2,7 @@
 __pycache__
 .DS_Store
 *.pyc
-.gptcontext*
+# Ignore GPT context outputs and cache
+.gptcontext-cache/
+.gptcontext.txt
+.gptcontext_message.txt

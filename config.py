@@ -21,6 +21,9 @@ CONTEXT_OUTPUT_FILENAME = ".gptcontext.txt"
 # Output filename for the optional message template
 MESSAGE_OUTPUT_FILENAME = ".gptcontext_message.txt"
 
+# Cache directory name for summaries, relative to the project root
+GPTCONTEXT_CACHE_DIRNAME = ".gptcontext-cache"
+
 # OpenAI model used for summarization (when --summarize is enabled)
 OPENAI_MODEL = "gpt-3.5-turbo-0125"
 
