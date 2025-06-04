@@ -7,11 +7,11 @@
 ## Features
 
 - Recursively scans project directories  
-- Honors `.gitignore` and skips common excluded folders  
-- Includes only relevant file types (e.g. `.py`, `.md`, `.json`, etc.)  
+- Honors `.gitignore` and `context_config.json`  
+- Supports configurable include/exclude rules  
 - Optionally summarizes large files via OpenAI API  
-- Caches summaries for speed and efficiency  
-- Limits total output by token count  
+- Caches summaries for efficiency  
+- Limits output to a maximum total token count  
 
 ---
 
@@ -22,53 +22,7 @@
 
 ---
 
-## Usage
-
-### 1. Run with defaults
-
-```bash
-python build_context.py
-```
-
-This will:
-
-- Scan the current directory
-- Include relevant files under token and size limits
-- Write output to `context.txt`
-
-### 2. With summarization (for large files)
-
-```bash
-python build_context.py --summarize
-```
-
-Large files (over 2000 tokens) will be summarized using the OpenAI API.
-
-### 3. Customize options
-
-- Set a maximum token count (default is 12000):
-
-  ```bash
-  python build_context.py --max-tokens 8000
-  ```
-
-- Change output filename:
-
-  ```bash
-  python build_context.py --output my_context.txt
-  ```
-
-- Use a different base directory:
-
-  ```bash
-  python build_context.py --base ../myproject
-  ```
-
----
-
-## Installation
-
-Follow these steps to set up and use **GPTContext** locally:
+## Installation and Usage
 
 ### 1. Clone the repository
 
@@ -77,7 +31,7 @@ git clone https://github.com/aleksandarristic/gptcontext.git
 cd gptcontext
 ```
 
-### 2. Create a virtual environment and install dependencies
+### 2. Set up virtual environment and install dependencies
 
 ```bash
 python -m venv .venv
@@ -85,13 +39,13 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. Set up a shell alias
+### 3. Set up a shell alias (optional)
 
-Edit your `~/.zshrc` or `~/.bashrc` and add the following:
+Edit your `~/.zshrc` or `~/.bashrc`:
 
 ```bash
 # Set the path to where you cloned the repo
-CONTEXT_DIR="$HOME/Code/gptcontext"  # adjust as needed
+CONTEXT_DIR="$HOME/Code/gptcontext"  # adjust if needed
 
 # Define the alias
 alias gptcontext="$CONTEXT_DIR/.venv/bin/python $CONTEXT_DIR/build_context.py --base . --output context.txt"
@@ -103,17 +57,75 @@ Then reload your shell:
 source ~/.zshrc  # or ~/.bashrc
 ```
 
-### 4. Generate context via CLI
+---
 
-In any project directory:
+## CLI Usage
+
+### Run with defaults
 
 ```bash
-gptcontext
+python build_context.py
 ```
 
-This will scan the current directory, summarize large files using OpenAI (if needed), and output `context.txt`.
+This will:
+- Scan the current directory
+- Use default config from constants (or `context_config.json` if present)
+- Write `context.txt`
 
-Make sure to set your OpenAI API key beforehand:
+### Summarize large files
+
+```bash
+python build_context.py --summarize
+```
+
+Files over 2000 tokens will be summarized using the OpenAI API (set your API key via `OPENAI_API_KEY`).
+
+### Other options
+
+- Set max total tokens:
+
+  ```bash
+  python build_context.py --max-tokens 8000
+  ```
+
+- Change output file:
+
+  ```bash
+  python build_context.py --output alt_context.txt
+  ```
+
+- Use a different base directory:
+
+  ```bash
+  python build_context.py --base ../myproject
+  ```
+
+- Generate a message template for ChatGPT:
+
+  ```bash
+  python build_context.py --generate-message
+  ```
+
+---
+
+## Configuration
+
+By default, file types and excluded directories are defined in code (`DEFAULT_CONFIG_INCLUDE_EXTS`, `DEFAULT_CONFIG_EXCLUDE_DIRS`).
+
+To override, place a `context_config.json` file in your project root with:
+
+```json
+{
+  "include_extensions": [".py", ".md", ".json"],
+  "exclude_dirs": [".git", "node_modules", "__pycache__"]
+}
+```
+
+---
+
+## OpenAI API Key
+
+If using summarization, set your key via:
 
 ```bash
 export OPENAI_API_KEY=sk-...
@@ -123,23 +135,29 @@ export OPENAI_API_KEY=sk-...
 
 ## Output Example
 
-The generated `context.txt` includes:
+The generated `context.txt` contains:
 
 ```
 # app/main.py
-<file contents>
+<source code>
 
-# Summary of app/utils/large_file.py
+# Summary of app/large_module.py
 <LLM-generated summary>
 ```
 
 ---
 
-## Sample Message Template
+## Message Template
 
-A template is provided in `message_sample.txt` to help you send the context to ChatGPT.
+To generate a ChatGPT-ready message, use:
 
-### Example format:
+```bash
+python build_context.py --generate-message
+```
+
+It reads from `message_sample.txt` and outputs a filled message to `gptcontext_message.txt`.
+
+Example structure:
 
 ```
 You are helping me with this codebase.
@@ -154,9 +172,6 @@ Below is a sample of files from the project. Use this as your working context.
 
 Now, ...
 ```
-
-This message gives ChatGPT the right framing to work with your source code context.
-
 
 ---
 

@@ -1,0 +1,16 @@
+{
+  "include_extensions": [
+    ".py", ".md", ".js", ".ts", ".jsx", ".tsx",
+    ".json", ".toml", ".yaml", ".yml", ".html", ".css",
+    ".scss", ".sass", ".less", ".java", ".go", ".rs",
+    ".cpp", ".c", ".h", ".hpp", ".cs", ".swift", ".kt", ".m",
+    ".sh", ".bash", ".zsh", ".ps1", ".pl", ".rb", ".php",
+    ".ini", ".cfg", ".env", ".txt", ".xml"
+  ],
+  "exclude_dirs": [
+    ".git", ".svn", ".hg", "node_modules", "__pycache__",
+    "dist", "build", ".venv", "env", ".mypy_cache", ".pytest_cache",
+    ".vscode", ".idea", ".context-cache", ".DS_Store", "__snapshots__",
+    ".coverage", ".cache"
+  ]
+}
