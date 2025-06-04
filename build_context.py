@@ -5,12 +5,14 @@ CLI wrapper that wires up GitignoreManager, FileScanner, and ContextBuilder.
 
 import argparse
 import logging
+import sys
 from pathlib import Path
 
 import config
 from context_builder import ContextBuilder
 from file_scanner import FileScanner
 from gitignore_manager import GitignoreManager
+from summarizer import APIKeyError, QuotaExceededError
 
 # Silence OpenAI + HTTPX/HTTPCore noise even when --verbose is passed:
 logging.getLogger("openai").setLevel(logging.WARNING)
@@ -72,6 +74,11 @@ def main() -> None:
         action="store_true",
         help="Do not write any files; just report what would be included",
     )
+    parser.add_argument(
+        "--continue-on-error",
+        action="store_true",
+        help="Continue processing even if some summaries fail (not recommended for quota errors)",
+    )
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -80,6 +87,17 @@ def main() -> None:
     )
 
     base_path = Path(args.base).resolve()
+
+    # Validate summarization requirements
+    if args.summarize:
+        import os
+
+        if not os.getenv("OPENAI_API_KEY"):
+            logger.error(
+                "ERROR: --summarize requires OPENAI_API_KEY environment variable"
+            )
+            logger.error("Either set OPENAI_API_KEY or remove --summarize flag")
+            sys.exit(1)
 
     # 1) Update .gitignore
     gim = GitignoreManager(base_path)
@@ -120,13 +138,35 @@ def main() -> None:
         max_total_tokens=args.max_tokens,
         summarize_large=args.summarize,
     )
-    context_str, total_used, full_count, summary_count = builder.build(files)
+
+    try:
+        context_str, total_used, full_count, summary_count, failed_count = (
+            builder.build(files)
+        )
+    except QuotaExceededError as e:
+        logger.error(f"FATAL: {e}")
+        logger.error(
+            "Please check your OpenAI billing and quota at https://platform.openai.com/account/billing"
+        )
+        logger.error("You can also run without --summarize to process only small files")
+        sys.exit(1)
+    except APIKeyError as e:
+        logger.error(f"FATAL: {e}")
+        logger.error("Please check your OPENAI_API_KEY environment variable")
+        sys.exit(1)
 
     # 5) Summary output
     logger.info("--- Context Build Summary ---")
     logger.info(f"Files included in full:     {full_count}")
     logger.info(f"Files included as summary:  {summary_count}")
+    if failed_count > 0:
+        logger.warning(f"Files failed to process:    {failed_count}")
     logger.info(f"Total tokens used:          {total_used} / {args.max_tokens}")
+
+    # Warn if we have failures
+    if failed_count > 0:
+        logger.warning(f"WARNING: {failed_count} files could not be processed")
+        logger.warning("Consider running with --verbose to see detailed errors")
 
     if args.dry_run:
         logger.info("Dry-run mode: no files written.")
@@ -139,11 +179,18 @@ def main() -> None:
         logger.info(f'✓ Wrote context file to "{context_filename}"')
     except Exception as e:
         logger.error(f"Failed to write context file {context_filename}: {e}")
-        return
+        sys.exit(1)
 
     # 7) Optionally write message template
     if args.generate_message:
         write_message_template(context_str, base_path / config.MESSAGE_OUTPUT_FILENAME)
+
+    # 8) Exit with appropriate code
+    if failed_count > 0:
+        logger.info("Completed with some failures")
+        sys.exit(2)  # Partial success
+    else:
+        logger.info("Completed successfully")
 
 
 if __name__ == "__main__":

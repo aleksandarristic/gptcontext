@@ -6,7 +6,12 @@ from typing import List, Optional, Tuple
 import tiktoken
 
 import config
-from summarizer import get_cached_summary
+from summarizer import (
+    APIKeyError,
+    QuotaExceededError,
+    SummarizationError,
+    get_cached_summary,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +75,7 @@ class ContextBuilder:
         content: str,
         tokens: int,
         used_tokens: int,
-    ) -> Tuple[str, int, str]:
+    ) -> Tuple[str, int, str, bool]:
         """
         Decide whether to:
           - include a file in full,
@@ -78,35 +83,52 @@ class ContextBuilder:
           - or skip (and why).
 
         Returns:
-            (action, tokens_to_add, snippet)
-            action ∈ {"include_full", "include_summary", "skip_threshold", "skip_summary_token", "skip_total_token"}
+            (action, tokens_to_add, snippet, success_flag)
+            action ∈ {"include_full", "include_summary", "skip_threshold", "skip_summary_token", "skip_total_token", "skip_summary_failed"}
         """
         if tokens > self.max_file_tokens:
             if self.summarize_large:
-                summary = get_cached_summary(
-                    content, str(rel_path), self.model, self.cache_dir
-                )
-                s_tokens = _file_token_count(summary)
-                if used_tokens + s_tokens <= self.max_total_tokens:
-                    return (
-                        "include_summary",
-                        s_tokens,
-                        f"\n# Summary of {rel_path}\n{summary}",
+                try:
+                    summary, success = get_cached_summary(
+                        content, str(rel_path), self.model, self.cache_dir
                     )
-                else:
-                    return "skip_summary_token", 0, ""
+                    s_tokens = _file_token_count(summary)
+
+                    if not success:
+                        logger.warning(f"Failed to summarize {rel_path}, skipping file")
+                        return "skip_summary_failed", 0, "", False
+
+                    if used_tokens + s_tokens <= self.max_total_tokens:
+                        return (
+                            "include_summary",
+                            s_tokens,
+                            f"\n# Summary of {rel_path}\n{summary}",
+                            True,
+                        )
+                    else:
+                        return "skip_summary_token", 0, "", True
+
+                except (QuotaExceededError, APIKeyError) as e:
+                    logger.error(f"Summarization failed: {e}")
+                    logger.error(
+                        "Stopping context generation due to summarization error"
+                    )
+                    raise
+                except SummarizationError as e:
+                    logger.warning(f"Could not summarize {rel_path}: {e}")
+                    return "skip_summary_failed", 0, "", False
             else:
-                return "skip_threshold", 0, ""
+                return "skip_threshold", 0, "", True
         else:
             if used_tokens + tokens <= self.max_total_tokens:
-                return "include_full", tokens, f"\n# {rel_path}\n{content}"
+                return "include_full", tokens, f"\n# {rel_path}\n{content}", True
             else:
-                return "skip_total_token", 0, ""
+                return "skip_total_token", 0, "", True
 
     def build(
         self,
         files: List[Path],
-    ) -> Tuple[str, int, int, int]:
+    ) -> Tuple[str, int, int, int, int]:
         """
         Given a list of file Paths (already filtered by FileScanner), read each file,
         count tokens, and decide inclusion. Uses a thread pool to parallelize I/O.
@@ -119,7 +141,8 @@ class ContextBuilder:
               - combined_context (str),
               - total_tokens_used (int),
               - full_count (int, number of files included in full),
-              - summary_count (int, number of files included as summaries)
+              - summary_count (int, number of files included as summaries),
+              - failed_count (int, number of files that failed to process)
         """
         logger.info(f"✓ Building context from {len(files)} files (parallel loading)...")
 
@@ -130,18 +153,24 @@ class ContextBuilder:
         used_tokens = 0
         full_count = 0
         summary_count = 0
+        failed_count = 0
         parts: List[str] = []
 
         # Sequentially decide inclusion
         for path, content, tokens in results:
             if content is None:
-                # Already logged inside _load_and_count
+                failed_count += 1
                 continue
 
             rel_path = path.relative_to(self.base_path)
-            action, t_add, snippet = self._decide_inclusion(
-                rel_path, content, tokens, used_tokens
-            )
+
+            try:
+                action, t_add, snippet, success = self._decide_inclusion(
+                    rel_path, content, tokens, used_tokens
+                )
+            except (QuotaExceededError, APIKeyError):
+                # Re-raise critical errors that should stop processing
+                raise
 
             if action == "include_full":
                 parts.append(snippet)
@@ -159,6 +188,9 @@ class ContextBuilder:
                 logger.info(f"Skipped summary of {rel_path}: token limit reached")
             elif action == "skip_total_token":
                 logger.info(f"Skipped {rel_path}: total token limit reached")
+            elif action == "skip_summary_failed":
+                logger.warning(f"Skipped {rel_path}: summarization failed")
+                failed_count += 1
 
         combined = "\n".join(parts)
-        return combined, used_tokens, full_count, summary_count
+        return combined, used_tokens, full_count, summary_count, failed_count
