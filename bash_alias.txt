@@ -1,0 +1,5 @@
+# Set the path to where you cloned the repo
+CONTEXT_DIR="$HOME/Code/gptcontext"  # adjust as needed
+
+# Define the alias
+alias gptcontext="$CONTEXT_DIR/.venv/bin/python $CONTEXT_DIR/build_context.py --base . --output context.txt"

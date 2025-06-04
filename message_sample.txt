@@ -1,0 +1,9 @@
+You are helping me with this codebase.
+
+Below is a sample of files from the project. Use this as your working context.
+
+<context starts>
+... (paste from context.txt)
+<context ends>
+
+Now, can you help me with [X]?
