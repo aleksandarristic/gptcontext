@@ -6,3 +6,4 @@ __pycache__
 .gptcontext-cache/
 .gptcontext.txt
 .gptcontext_message.txt
+.gptcontext-config.yml
