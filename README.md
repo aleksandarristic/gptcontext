@@ -7,11 +7,11 @@
 ## Features
 
 - Recursively scans project directories  
-- Honors `.gitignore` and `context_config.json`  
-- Supports configurable include/exclude rules  
-- Optionally summarizes large files via OpenAI API  
+- Honors `.gitignore`  
+- Configuration entirely in `config.py` (no JSON config)  
+- Optionally summarizes large files using OpenAI API  
 - Caches summaries for efficiency  
-- Limits output to a maximum total token count  
+- Limits output by total token count  
 
 ---
 
@@ -45,10 +45,10 @@ Edit your `~/.zshrc` or `~/.bashrc`:
 
 ```bash
 # Set the path to where you cloned the repo
-CONTEXT_DIR="$HOME/Code/gptcontext"  # adjust if needed
+CONTEXT_DIR="$HOME/Code/gptcontext"  # adjust as needed
 
 # Define the alias
-alias gptcontext="$CONTEXT_DIR/.venv/bin/python $CONTEXT_DIR/build_context.py --base . --output context.txt"
+alias gptcontext="$CONTEXT_DIR/.venv/bin/python $CONTEXT_DIR/build_context.py --base ."
 ```
 
 Then reload your shell:
@@ -69,8 +69,8 @@ python build_context.py
 
 This will:
 - Scan the current directory
-- Use default config from constants (or `context_config.json` if present)
-- Write `context.txt`
+- Use configuration from `config.py`
+- Write `.gptcontext.txt`
 
 ### Summarize large files
 
@@ -78,7 +78,7 @@ This will:
 python build_context.py --summarize
 ```
 
-Files over 2000 tokens will be summarized using the OpenAI API (set your API key via `OPENAI_API_KEY`).
+Files over the configured token threshold will be summarized using the OpenAI API (requires `OPENAI_API_KEY`).
 
 ### Other options
 
@@ -100,6 +100,12 @@ Files over 2000 tokens will be summarized using the OpenAI API (set your API key
   python build_context.py --base ../myproject
   ```
 
+- Enable debug logging:
+
+  ```bash
+  python build_context.py --verbose
+  ```
+
 - Generate a message template for ChatGPT:
 
   ```bash
@@ -110,16 +116,15 @@ Files over 2000 tokens will be summarized using the OpenAI API (set your API key
 
 ## Configuration
 
-By default, file types and excluded directories are defined in code (`DEFAULT_CONFIG_INCLUDE_EXTS`, `DEFAULT_CONFIG_EXCLUDE_DIRS`).
+All configuration is defined in `config.py`:
 
-To override, place a `context_config.json` file in your project root with:
+- `INCLUDE_EXTS`: file extensions to include
+- `EXCLUDE_DIRS`: directories to exclude
+- `EXCLUDE_FILES`: filenames to exclude
+- `MAX_TOTAL_TOKENS`, `MAX_FILE_TOKENS`, `MAX_FILE_SIZE_MB`
+- Output and model settings
 
-```json
-{
-  "include_extensions": [".py", ".md", ".json"],
-  "exclude_dirs": [".git", "node_modules", "__pycache__"]
-}
-```
+There is no support for external config files (`config.json` is removed).
 
 ---
 
@@ -135,7 +140,7 @@ export OPENAI_API_KEY=sk-...
 
 ## Output Example
 
-The generated `context.txt` contains:
+The generated `.gptcontext.txt` contains:
 
 ```
 # app/main.py
@@ -155,7 +160,7 @@ To generate a ChatGPT-ready message, use:
 python build_context.py --generate-message
 ```
 
-It reads from `message_sample.txt` and outputs a filled message to `gptcontext_message.txt`.
+It reads from `message_sample.txt` and outputs a filled message to `.gptcontext_message.txt`.
 
 Example structure:
 
@@ -166,7 +171,7 @@ Below is a sample of files from the project. Use this as your working context.
 
 <context starts>
 
-<paste contents of context.txt here>
+<paste contents of .gptcontext.txt here>
 
 <context ends>
 
