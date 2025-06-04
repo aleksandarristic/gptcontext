@@ -88,6 +88,10 @@ def main() -> None:
 
     base_path = Path(args.base).resolve()
 
+    # Initialize config with the base path to load local overrides
+    config.init_config(base_path)
+    cfg = config.get_config()
+
     # Validate summarization requirements
     if args.summarize:
         import os
@@ -103,9 +107,10 @@ def main() -> None:
     gim = GitignoreManager(base_path)
     gim.ensure_entries(
         [
-            config.CONTEXT_OUTPUT_FILENAME,
-            config.MESSAGE_OUTPUT_FILENAME,
-            f"{config.GPTCONTEXT_CACHE_DIRNAME}/",
+            cfg.CONTEXT_OUTPUT_FILENAME,
+            cfg.MESSAGE_OUTPUT_FILENAME,
+            f"{cfg.GPTCONTEXT_CACHE_DIRNAME}/",
+            config.LOCAL_CONFIG_FILENAME,  # Also ignore the local config file
         ]
     )
     spec = gim.load_spec()
@@ -113,16 +118,16 @@ def main() -> None:
     # 2) Scan files
     scanner = FileScanner(
         base_path=base_path,
-        include_exts=config.INCLUDE_EXTS,
-        exclude_dirs=config.EXCLUDE_DIRS,
-        exclude_files=config.EXCLUDE_FILES,
-        skip_files={config.CONTEXT_OUTPUT_FILENAME, config.MESSAGE_OUTPUT_FILENAME},
+        include_exts=cfg.INCLUDE_EXTS,
+        exclude_dirs=cfg.EXCLUDE_DIRS,
+        exclude_files=cfg.EXCLUDE_FILES,
+        skip_files={cfg.CONTEXT_OUTPUT_FILENAME, cfg.MESSAGE_OUTPUT_FILENAME},
         gitignore_spec=spec,
     )
     files = scanner.list_files()
 
     # 3) Create cache directory if summarization is on
-    cache_dir = base_path / config.GPTCONTEXT_CACHE_DIRNAME
+    cache_dir = base_path / cfg.GPTCONTEXT_CACHE_DIRNAME
     if args.summarize:
         if not cache_dir.exists():
             cache_dir.mkdir()
@@ -133,8 +138,8 @@ def main() -> None:
     # 4) Build context
     builder = ContextBuilder(
         cache_dir=cache_dir,
-        model=config.OPENAI_MODEL,
-        max_file_tokens=args.file_token_threshold or config.MAX_FILE_TOKENS,
+        model=cfg.OPENAI_MODEL,
+        max_file_tokens=args.file_token_threshold or cfg.MAX_FILE_TOKENS,
         max_total_tokens=args.max_tokens,
         summarize_large=args.summarize,
     )
@@ -173,7 +178,7 @@ def main() -> None:
         return
 
     # 6) Write context file
-    context_filename = args.output or config.CONTEXT_OUTPUT_FILENAME
+    context_filename = args.output or cfg.CONTEXT_OUTPUT_FILENAME
     try:
         (base_path / context_filename).write_text(context_str, encoding="utf-8")
         logger.info(f'✓ Wrote context file to "{context_filename}"')
@@ -183,7 +188,7 @@ def main() -> None:
 
     # 7) Optionally write message template
     if args.generate_message:
-        write_message_template(context_str, base_path / config.MESSAGE_OUTPUT_FILENAME)
+        write_message_template(context_str, base_path / cfg.MESSAGE_OUTPUT_FILENAME)
 
     # 8) Exit with appropriate code
     if failed_count > 0:

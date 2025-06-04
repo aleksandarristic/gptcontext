@@ -1,0 +1,77 @@
+# Sample .gptcontext-config.yml
+# Place this file in your project root to override default configuration values
+
+# Maximum total number of tokens allowed in the final context output
+MAX_TOTAL_TOKENS: 15000
+
+# Per-file token threshold; if a file exceeds this, it will be summarized (if --summarize is enabled)
+MAX_FILE_TOKENS: 3000
+
+# Maximum file size (in megabytes); files larger than this are skipped entirely
+MAX_FILE_SIZE_MB: 2
+
+# OpenAI model used for summarization (when --summarize is enabled)
+OPENAI_MODEL: "gpt-4"
+
+# Output filename for the generated context content
+CONTEXT_OUTPUT_FILENAME: ".project-context.txt"
+
+# Output filename for the optional message template
+MESSAGE_OUTPUT_FILENAME: ".project-context-message.txt"
+
+# Cache directory name for summaries, relative to the project root
+GPTCONTEXT_CACHE_DIRNAME: ".context-cache"
+
+# File extensions to include in context generation
+# Note: Use a list in YAML, it will be converted to a set internally
+INCLUDE_EXTS:
+  - ".py"
+  - ".js"
+  - ".ts"
+  - ".jsx"
+  - ".tsx"
+  - ".md"
+  - ".json"
+  - ".yaml"
+  - ".yml"
+  - ".toml"
+  - ".html"
+  - ".css"
+  - ".scss"
+  - ".go"
+  - ".rs"
+  - ".java"
+  - ".cpp"
+  - ".c"
+  - ".h"
+
+# Directory names to exclude from scanning
+EXCLUDE_DIRS:
+  - ".git"
+  - ".svn"
+  - "node_modules"
+  - "__pycache__"
+  - "dist"
+  - "build"
+  - ".venv"
+  - "venv"
+  - "env"
+  - ".mypy_cache"
+  - ".pytest_cache"
+  - ".vscode"
+  - ".idea"
+  - ".context-cache"  # Match the cache dir name above
+  - "target"  # Rust/Java build directory
+  - "bin"     # Common binary directory
+  - "obj"     # C#/.NET build directory
+
+# Specific filenames to exclude
+EXCLUDE_FILES:
+  - ".project-context.txt"        # Match the output filename above
+  - ".project-context-message.txt" # Match the message filename above
+  - "README.md"
+  - "CHANGELOG.md"
+  - "LICENSE"
+  - "package-lock.json"
+  - "yarn.lock"
+  - "Cargo.lock"
