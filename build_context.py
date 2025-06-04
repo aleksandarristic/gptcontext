@@ -12,6 +12,12 @@ from context_builder import ContextBuilder
 from file_scanner import FileScanner
 from gitignore_manager import GitignoreManager
 
+# Silence OpenAI + HTTPX/HTTPCore noise even when --verbose is passed:
+logging.getLogger("openai").setLevel(logging.WARNING)
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+
 logger = logging.getLogger(__name__)
 
 

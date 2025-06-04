@@ -25,7 +25,7 @@ MESSAGE_OUTPUT_FILENAME = ".gptcontext_message.txt"
 GPTCONTEXT_CACHE_DIRNAME = ".gptcontext-cache"
 
 # OpenAI model used for summarization (when --summarize is enabled)
-OPENAI_MODEL = "gpt-3.5-turbo-0125"
+OPENAI_MODEL = "gpt-3.5-turbo"
 
 # Token encoder name used by tiktoken to measure token usage
 ENCODING_NAME = "cl100k_base"
