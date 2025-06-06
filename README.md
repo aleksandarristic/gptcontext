@@ -11,13 +11,17 @@
 3. [Configuration](#configuration)  
 4. [Basic Usage](#basic-usage)  
 5. [Advanced Usage](#advanced-usage)  
-   - [Using a Local Override (`.gptcontext-config.yml`)](#using-a-local-override)  
+   - [Using a Local Override](#using-a-local-override)  
    - [Summarizing Large Files](#summarizing-large-files)  
-   - [Generating a Message Template](#generating-a-message-template)  
-   - [Dry Run (Preview Only)](#dry-run-preview-only)  
-6. [Python API Usage](#python-api-usage)  
-7. [Tests](#tests)  
-8. [License](#license)  
+6. [Using Config Presets](#using-config-presets)  
+   - [How to use a preset](#how-to-use-a-preset)  
+   - [Available Presets](#available-presets)  
+   - [Config file lookup order](#config-file-lookup-order)  
+7. [Generating a Message Template](#generating-a-message-template)  
+8. [Dry Run (Preview Only)](#dry-run-preview-only)  
+9. [Python API Usage](#python-api-usage)  
+10. [Tests](#tests)  
+11. [License](#license)  
 
 ---
 
@@ -242,6 +246,16 @@ gptcontext --config-file presets/backend_only.yml
 | `cdk_py.yml`             | AWS CDK — Python project                      | `gptcontext --config-file presets/cdk_py.yml`            |
 | `cdk_java.yml`           | AWS CDK — Java project                        | `gptcontext --config-file presets/cdk_java.yml`          |
 | `cdk_csharp.yml`         | AWS CDK — C# (.NET) project                   | `gptcontext --config-file presets/cdk_csharp.yml`        |
+
+---
+
+### Config file lookup order
+
+When using `--config-file`, GPTContext will look for the config file in this order:
+
+1. Relative to GPTContext install (same folder as `build_context.py`)
+2. Relative to project root (`--base`, defaults to current directory)
+3. Relative to scan directory (`--scan-dir`), if specified
 
 ---
 
