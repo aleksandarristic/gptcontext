@@ -49,6 +49,12 @@ def write_message_template(context: str, message_path: Path) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate GPT context from codebase.")
     parser.add_argument(
+        "--config-file",
+        "-c",
+        type=str,
+        help="Path to a custom .gptcontext-config.yml (overrides default).",
+    )
+    parser.add_argument(
         "--base", default=config.BASE_DIR, help="Base directory to scan"
     )
     parser.add_argument("--max-tokens", type=int, default=config.MAX_TOTAL_TOKENS)
@@ -89,7 +95,10 @@ def main() -> None:
     base_path = Path(args.base).resolve()
 
     # Initialize config with the base path to load local overrides
-    config.init_config(base_path)
+    if args.config_file:
+        config.init_config(base_path, Path(args.config_file))
+    else:
+        config.init_config(base_path)
     cfg = config.get_config()
 
     # Validate summarization requirements

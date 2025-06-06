@@ -60,16 +60,18 @@ class ConfigManager:
     Manages configuration with support for local overrides via .gptcontext-config.yml
     """
 
-    def __init__(self, base_path: Optional[Path] = None):
+    def __init__(self, base_path: Optional[Path] = None, config_file: Optional[Path] = None):
         """
-        Initialize config manager.
-
         Args:
-            base_path: Base directory to look for local config file. Defaults to current directory.
+          base_path: directory to search for .gptcontext-config.yml (ignored if config_file is set)
+          config_file: explicit path to a YAML override file
         """
         self.base_path = Path(base_path) if base_path else Path.cwd()
         self._config = _DEFAULT_CONFIG.copy()
-        self._load_local_config()
+        if config_file:
+            self._load_explicit_config(Path(config_file))
+        else:
+            self._load_local_config()
 
     def _load_local_config(self) -> None:
         """Load and apply local configuration overrides if they exist."""
@@ -102,6 +104,30 @@ class ConfigManager:
         except Exception as e:
             print(f"Warning: Failed to load {LOCAL_CONFIG_FILENAME}: {e}")
 
+
+    def _load_explicit_config(self, config_path: Path) -> None:
+        """Load and apply overrides from exactly this file."""
+        if not config_path.exists():
+            print(f"Warning: Config file {config_path} not found.")
+            return
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                local_config = yaml.safe_load(f) or {}
+            for key, value in local_config.items():
+                if key in self._config:
+                    if isinstance(self._config[key], set) and isinstance(value, list):
+                        self._config[key] = set(value)
+                    else:
+                        self._config[key] = value
+                else:
+                    print(f"Warning: Unknown config key '{key}' in {config_path.name}")
+            print(f"✓ Loaded explicit config from {config_path}")
+        except yaml.YAMLError as e:
+            print(f"Warning: Failed to parse {config_path}: {e}")
+        except Exception as e:
+            print(f"Warning: Failed to load {config_path}: {e}")
+    
+    
     def get(self, key: str, default: Any = None) -> Any:
         """Get a configuration value."""
         return self._config.get(key, default)
@@ -166,8 +192,12 @@ def _update_module_globals():
 
 
 # Override init_config to also update globals
-def init_config(base_path: Optional[Path] = None) -> None:
-    """Initialize the global config manager with the given base path."""
+def init_config(base_path: Optional[Path] = None, config_file: Optional[Path] = None) -> None:
+    """
+    Initialize the global config manager.
+    If config_file is provided, load overrides from that file instead of searching for
+    .gptcontext-config.yml in base_path.
+    """
     global _config_manager
-    _config_manager = ConfigManager(base_path)
+    _config_manager = ConfigManager(base_path, config_file)
     _update_module_globals()
