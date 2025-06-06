@@ -31,7 +31,7 @@ _DEFAULT_CONFIG = {
     # Token encoder name used by tiktoken to measure token usage
     "ENCODING_NAME": "cl100k_base",
     # File extensions to include in context generation
-    "INCLUDE_EXTS": {
+    "include_exts": {
         ".py", ".md", ".js", ".ts", ".jsx", ".tsx", ".json", ".toml", ".yaml", ".yml",
         ".html", ".css", ".scss", ".sass", ".less", ".java", ".go", ".rs", ".cpp", ".c",
         ".h", ".hpp", ".cs", ".swift", ".kt", ".m", ".sh", ".bash", ".zsh", ".ps1", ".pl",
@@ -39,6 +39,7 @@ _DEFAULT_CONFIG = {
     },
     
     "use_default_excludes": True,
+
     "exclude": [
         # Directories (with trailing slash)
         ".git/",
@@ -189,7 +190,7 @@ MESSAGE_OUTPUT_FILENAME = _DEFAULT_CONFIG["MESSAGE_OUTPUT_FILENAME"]
 GPTCONTEXT_CACHE_DIRNAME = _DEFAULT_CONFIG["GPTCONTEXT_CACHE_DIRNAME"]
 OPENAI_MODEL = _DEFAULT_CONFIG["OPENAI_MODEL"]
 ENCODING_NAME = _DEFAULT_CONFIG["ENCODING_NAME"]
-INCLUDE_EXTS = _DEFAULT_CONFIG["INCLUDE_EXTS"]
+INCLUDE_EXTS = _DEFAULT_CONFIG["include_exts"]
 EXCLUDE = _DEFAULT_CONFIG["exclude"]
 
 def _update_module_globals():
@@ -199,7 +200,7 @@ def _update_module_globals():
 
     global MAX_TOTAL_TOKENS, MAX_FILE_TOKENS, MAX_FILE_SIZE_MB, BASE_DIR
     global CONTEXT_OUTPUT_FILENAME, MESSAGE_OUTPUT_FILENAME, GPTCONTEXT_CACHE_DIRNAME
-    global OPENAI_MODEL, ENCODING_NAME, INCLUDE_EXTS, EXCLUDE_DIRS, EXCLUDE_FILES
+    global OPENAI_MODEL, ENCODING_NAME, INCLUDE_EXTS, EXCLUDE
 
     MAX_TOTAL_TOKENS = _config_manager.get("MAX_TOTAL_TOKENS")
     MAX_FILE_TOKENS = _config_manager.get("MAX_FILE_TOKENS")
@@ -210,9 +211,8 @@ def _update_module_globals():
     GPTCONTEXT_CACHE_DIRNAME = _config_manager.get("GPTCONTEXT_CACHE_DIRNAME")
     OPENAI_MODEL = _config_manager.get("OPENAI_MODEL")
     ENCODING_NAME = _config_manager.get("ENCODING_NAME")
-    INCLUDE_EXTS = _config_manager.get("INCLUDE_EXTS")
-    EXCLUDE_DIRS = _config_manager.get("EXCLUDE_DIRS")
-    EXCLUDE_FILES = _config_manager.get("EXCLUDE_FILES")
+    INCLUDE_EXTS = set(_config_manager.get("include_exts", set()))
+    EXCLUDE = set(_config_manager.get("exclude", set()))
 
 
 # Override init_config to also update globals

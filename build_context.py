@@ -205,7 +205,7 @@ def main() -> None:
     scanner = FileScanner(
         repo_root=base_path,
         scan_root=scan_root,
-        include_exts=cfg.INCLUDE_EXTS,
+        include_exts=cfg.get("include_exts", set()),
         exclude_matcher=exclude_matcher,
         skip_files={cfg.CONTEXT_OUTPUT_FILENAME, cfg.MESSAGE_OUTPUT_FILENAME},
         gitignore_spec=spec,
