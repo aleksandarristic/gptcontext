@@ -19,9 +19,8 @@
    - [Config file lookup order](#config-file-lookup-order)  
 7. [Generating a Message Template](#generating-a-message-template)  
 8. [Dry Run (Preview Only)](#dry-run-preview-only)  
-9. [Python API Usage](#python-api-usage)  
-10. [Tests](#tests)  
-11. [License](#license)  
+9. [Tests](#tests)  
+10. [License](#license)  
 
 ---
 
@@ -287,61 +286,6 @@ python build_context.py --base . --max-tokens 12000 --dry-run
 ```
 
 You will see logs about which files are included or skipped, but no `.gptcontext.txt` is written.
-
----
-
-## Python API Usage
-
-All the core functionality is also exposed as Python classes/functions. You can integrate them into your own scripts:
-
-```python
-from pathlib import Path
-from gitignore_manager import GitignoreManager
-from file_scanner import FileScanner
-from context_builder import ContextBuilder
-import config
-
-# 1) Initialize config
-config.init_config(base_path=Path("/path/to/project"))
-
-# 2) Update .gitignore
-base_path = Path("/path/to/project")
-gim = GitignoreManager(base_path)
-gim.ensure_entries([
-    config.CONTEXT_OUTPUT_FILENAME,
-    config.MESSAGE_OUTPUT_FILENAME,
-    f"{config.GPTCONTEXT_CACHE_DIRNAME}/",
-    config.LOCAL_CONFIG_FILENAME,
-])
-spec = gim.load_spec()
-
-# 3) Scan for files
-scanner = FileScanner(
-    repo_root=base_path,
-    scan_root=base_path,
-    include_exts=config.INCLUDE_EXTS,
-    exclude_dirs=config.EXCLUDE_DIRS,
-    exclude_files=config.EXCLUDE_FILES,
-    skip_files={config.CONTEXT_OUTPUT_FILENAME, config.MESSAGE_OUTPUT_FILENAME},
-    gitignore_spec=spec,
-)
-files = scanner.list_files()
-
-# 4) Build context (no summarization)
-builder = ContextBuilder(
-    cache_dir=Path.home() / ".gptcontext_cache",
-    scan_root=base_path,
-    model=config.OPENAI_MODEL,
-    max_file_tokens=config.MAX_FILE_TOKENS,
-    max_total_tokens=config.MAX_TOTAL_TOKENS,
-    summarize_large=False,
-)
-context_str, total_used, full_count, summary_count, failed_count = builder.build(files)
-
-print(f"Including {full_count} full files, {summary_count} summaries.")
-print("Generated context (first 500 chars):")
-print(context_str[:500])
-```
 
 ---
 
