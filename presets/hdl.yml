@@ -3,26 +3,30 @@
 MAX_TOTAL_TOKENS: 12000
 MAX_FILE_TOKENS: 4000
 
-INCLUDE_EXTS:
-  - .v
-  - .vh
-  - .sv
-  - .svh
-  - .vhd
-  - .vhdl
-  - .xdc
-  - .md
-  - .txt
-  - .yaml
-  - .yml
-  - .json
 
-EXCLUDE_DIRS:
-  - .git
-  - build
-  - work
-  - sim
-  - xsim.dir
-  - .idea
-  - .vscode
-  - .gptcontext-cache
+exclude:
+- .git/
+- build/
+- work/
+- sim/
+- xsim.dir/
+- .idea/
+- .vscode/
+- .gptcontext-cache/
+
+include_exts:
+- .v
+- .vh
+- .sv
+- .svh
+- .vhd
+- .vhdl
+- .xdc
+- .md
+- .txt
+- .yaml
+- .yml
+- .json
+
+
+use_default_excludes: true

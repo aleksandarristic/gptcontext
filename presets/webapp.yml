@@ -3,35 +3,39 @@
 MAX_TOTAL_TOKENS: 15000
 MAX_FILE_TOKENS: 4000
 
-INCLUDE_EXTS:
-  - .py
-  - .html
-  - .jinja
-  - .jinja2
-  - .md
-  - .js
-  - .ts
-  - .json
-  - .toml
-  - .yaml
-  - .yml
-  - .css
-  - .scss
-  - .env
-  - .txt
-  - .ini
-  - .cfg
 
-EXCLUDE_DIRS:
-  - .git
-  - .venv
-  - node_modules
-  - dist
-  - build
-  - static
-  - __pycache__
-  - .pytest_cache
-  - .mypy_cache
-  - .vscode
-  - .idea
-  - .gptcontext-cache
+exclude:
+- .git/
+- .venv/
+- node_modules/
+- dist/
+- build/
+- static/
+- __pycache__/
+- .pytest_cache/
+- .mypy_cache/
+- .vscode/
+- .idea/
+- .gptcontext-cache/
+
+include_exts:
+- .py
+- .html
+- .jinja
+- .jinja2
+- .md
+- .js
+- .ts
+- .json
+- .toml
+- .yaml
+- .yml
+- .css
+- .scss
+- .env
+- .txt
+- .ini
+- .cfg
+
+
+use_default_excludes: true

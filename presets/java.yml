@@ -3,24 +3,28 @@
 MAX_TOTAL_TOKENS: 12000
 MAX_FILE_TOKENS: 4000
 
-INCLUDE_EXTS:
-  - .java
-  - .xml
-  - .md
-  - .properties
-  - .yaml
-  - .yml
-  - .json
-  - .gradle
-  - .groovy
-  - .txt
 
-EXCLUDE_DIRS:
-  - .git
-  - target
-  - build
-  - .idea
-  - .vscode
-  - .gradle
-  - .gptcontext-cache
-  - out
+exclude:
+- .git/
+- target/
+- build/
+- .idea/
+- .vscode/
+- .gradle/
+- .gptcontext-cache/
+- out/
+
+include_exts:
+- .java
+- .xml
+- .md
+- .properties
+- .yaml
+- .yml
+- .json
+- .gradle
+- .groovy
+- .txt
+
+
+use_default_excludes: true

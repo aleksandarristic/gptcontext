@@ -13,6 +13,7 @@ from context_builder import ContextBuilder
 from file_scanner import FileScanner
 from gitignore_manager import GitignoreManager
 from summarizer import APIKeyError, QuotaExceededError
+from exclude_matcher import ExcludeMatcher
 
 # Silence OpenAI + HTTPX/HTTPCore noise even when --verbose is passed:
 logging.getLogger("openai").setLevel(logging.WARNING)
@@ -111,7 +112,9 @@ def main() -> None:
     if args.scan_dir:
         scan_root = (base_path / args.scan_dir).resolve()
         if not scan_root.exists() or not scan_root.is_dir():
-            logger.error(f"ERROR: scan directory {scan_root} does not exist or is not a directory")
+            logger.error(
+                f"ERROR: scan directory {scan_root} does not exist or is not a directory"
+            )
             sys.exit(1)
     else:
         scan_root = base_path
@@ -120,8 +123,8 @@ def main() -> None:
     config_path = None
     if args.config_file:
         candidate_paths = [
-            Path(__file__).parent / args.config_file,    # relative to build_context.py
-            base_path / args.config_file,                # relative to repo root (--base)
+            Path(__file__).parent / args.config_file,  # relative to build_context.py
+            base_path / args.config_file,  # relative to repo root (--base)
         ]
         if args.scan_dir:
             candidate_paths.append(scan_root / args.config_file)  # relative to scan_dir
@@ -136,11 +139,13 @@ def main() -> None:
             logger.info(f'✓ Using config file "{config_path}"')
             config.init_config(base_path, config_path)
         else:
-            logger.error(f'ERROR: config file "{args.config_file}" not found in any of the expected locations:')
-            logger.error(f'  - {candidate_paths[0]}')
-            logger.error(f'  - {candidate_paths[1]}')
+            logger.error(
+                f'ERROR: config file "{args.config_file}" not found in any of the expected locations:'
+            )
+            logger.error(f"  - {candidate_paths[0]}")
+            logger.error(f"  - {candidate_paths[1]}")
             if args.scan_dir:
-                logger.error(f'  - {candidate_paths[2]}')
+                logger.error(f"  - {candidate_paths[2]}")
             sys.exit(1)
     else:
         config.init_config(base_path)
@@ -151,14 +156,18 @@ def main() -> None:
     if args.scan_dir:
         scan_root = (base_path / args.scan_dir).resolve()
         if not scan_root.exists() or not scan_root.is_dir():
-            logger.error(f"ERROR: scan directory {scan_root} does not exist or is not a directory")
+            logger.error(
+                f"ERROR: scan directory {scan_root} does not exist or is not a directory"
+            )
             sys.exit(1)
     else:
         scan_root = base_path
 
     home = Path.home()
     default_out = home / ".gptcontext"
-    out_root = Path(args.output_dir).expanduser().resolve() if args.output_dir else default_out
+    out_root = (
+        Path(args.output_dir).expanduser().resolve() if args.output_dir else default_out
+    )
     # The subfolder name is the final component of scan_root
     subfolder = scan_root.name
     output_base = out_root / subfolder
@@ -188,15 +197,20 @@ def main() -> None:
     spec = gim.load_spec()
 
     # 2) Scan files
+    exclude_matcher = ExcludeMatcher(
+        patterns=cfg.get("exclude", []),
+        use_default_excludes=cfg.get("use_default_excludes", True),
+    )
+
     scanner = FileScanner(
         repo_root=base_path,
         scan_root=scan_root,
         include_exts=cfg.INCLUDE_EXTS,
-        exclude_dirs=cfg.EXCLUDE_DIRS,
-        exclude_files=cfg.EXCLUDE_FILES,
+        exclude_matcher=exclude_matcher,
         skip_files={cfg.CONTEXT_OUTPUT_FILENAME, cfg.MESSAGE_OUTPUT_FILENAME},
         gitignore_spec=spec,
     )
+
     files = scanner.list_files()
 
     # 3) Create cache directory if summarization is on

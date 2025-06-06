@@ -3,28 +3,32 @@
 MAX_TOTAL_TOKENS: 15000
 MAX_FILE_TOKENS: 4000
 
-INCLUDE_EXTS:
-  - .js
-  - .jsx
-  - .ts
-  - .tsx
-  - .json
-  - .md
-  - .html
-  - .css
-  - .scss
-  - .sass
-  - .yml
-  - .yaml
 
-EXCLUDE_DIRS:
-  - .git
-  - node_modules
-  - dist
-  - build
-  - coverage
-  - .cache
-  - .gptcontext-cache
-  - .idea
-  - .vscode
-  - public/static
+exclude:
+- .git/
+- node_modules/
+- dist/
+- build/
+- coverage/
+- .cache/
+- .gptcontext-cache/
+- .idea/
+- .vscode/
+- public/static/
+
+include_exts:
+- .js
+- .jsx
+- .ts
+- .tsx
+- .json
+- .md
+- .html
+- .css
+- .scss
+- .sass
+- .yml
+- .yaml
+
+
+use_default_excludes: true

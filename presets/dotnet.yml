@@ -3,22 +3,26 @@
 MAX_TOTAL_TOKENS: 15000
 MAX_FILE_TOKENS: 4000
 
-INCLUDE_EXTS:
-  - .cs
-  - .csproj
-  - .sln
-  - .json
-  - .yaml
-  - .yml
-  - .md
-  - .txt
-  - .xml
-  - .config
 
-EXCLUDE_DIRS:
-  - .git
-  - bin
-  - obj
-  - .idea
-  - .vscode
-  - .gptcontext-cache
+exclude:
+- .git/
+- bin/
+- obj/
+- .idea/
+- .vscode/
+- .gptcontext-cache/
+
+include_exts:
+- .cs
+- .csproj
+- .sln
+- .json
+- .yaml
+- .yml
+- .md
+- .txt
+- .xml
+- .config
+
+
+use_default_excludes: true

@@ -10,72 +10,74 @@ GPTCONTEXT_CACHE_DIRNAME: ".gptcontext-cache"
 OPENAI_MODEL: "gpt-3.5-turbo"
 ENCODING_NAME: "cl100k_base"
 
-INCLUDE_EXTS:
-  - .py
-  - .md
-  - .js
-  - .ts
-  - .jsx
-  - .tsx
-  - .json
-  - .toml
-  - .yaml
-  - .yml
-  - .html
-  - .css
-  - .scss
-  - .sass
-  - .less
-  - .java
-  - .go
-  - .rs
-  - .cpp
-  - .c
-  - .h
-  - .hpp
-  - .cs
-  - .swift
-  - .kt
-  - .m
-  - .sh
-  - .bash
-  - .zsh
-  - .ps1
-  - .pl
-  - .rb
-  - .php
-  - .ini
-  - .cfg
-  - .env
-  - .txt
-  - .xml
 
-EXCLUDE_DIRS:
-  - .git
-  - .svn
-  - .hg
-  - node_modules
-  - __pycache__
-  - dist
-  - build
-  - .venv
-  - env
-  - .mypy_cache
-  - .pytest_cache
-  - .vscode
-  - .idea
-  - .gptcontext-cache
-  - .DS_Store
-  - __snapshots__
-  - .coverage
-  - .cache
+exclude:
+- .git/
+- .svn/
+- .hg/
+- node_modules/
+- __pycache__/
+- dist/
+- build/
+- .venv/
+- env/
+- .mypy_cache/
+- .pytest_cache/
+- .vscode/
+- .idea/
+- .gptcontext-cache/
+- .DS_Store/
+- __snapshots__/
+- .coverage/
+- .cache/
+- .gptcontext.txt
+- .gptcontext_message.txt
+- README.md
+- CHANGELOG.md
+- LICENSE
+- CONTRIBUTING.md
+- CODE_OF_CONDUCT.md
+- SECURITY.md
 
-EXCLUDE_FILES:
-  - .gptcontext.txt
-  - .gptcontext_message.txt
-  - README.md
-  - CHANGELOG.md
-  - LICENSE
-  - CONTRIBUTING.md
-  - CODE_OF_CONDUCT.md
-  - SECURITY.md
+include_exts:
+- .py
+- .md
+- .js
+- .ts
+- .jsx
+- .tsx
+- .json
+- .toml
+- .yaml
+- .yml
+- .html
+- .css
+- .scss
+- .sass
+- .less
+- .java
+- .go
+- .rs
+- .cpp
+- .c
+- .h
+- .hpp
+- .cs
+- .swift
+- .kt
+- .m
+- .sh
+- .bash
+- .zsh
+- .ps1
+- .pl
+- .rb
+- .php
+- .ini
+- .cfg
+- .env
+- .txt
+- .xml
+
+
+use_default_excludes: true

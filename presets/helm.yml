@@ -3,21 +3,25 @@
 MAX_TOTAL_TOKENS: 12000
 MAX_FILE_TOKENS: 3000
 
-INCLUDE_EXTS:
-  - .yaml
-  - .yml
-  - .tpl
-  - .md
-  - .txt
-  - .sh
-  - Chart.yaml
-  - values.yaml
 
-EXCLUDE_DIRS:
-  - .git
-  - charts
-  - tmp
-  - .helmignore
-  - .gptcontext-cache
-  - .idea
-  - .vscode
+exclude:
+- .git/
+- charts/
+- tmp/
+- .helmignore/
+- .gptcontext-cache/
+- .idea/
+- .vscode/
+
+include_exts:
+- .yaml
+- .yml
+- .tpl
+- .md
+- .txt
+- .sh
+- Chart.yaml
+- values.yaml
+
+
+use_default_excludes: true

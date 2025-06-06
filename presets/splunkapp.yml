@@ -3,29 +3,32 @@
 MAX_TOTAL_TOKENS: 12000
 MAX_FILE_TOKENS: 4000
 
-INCLUDE_EXTS:
-  - .py
-  - .conf
-  - .json
-  - .spec
-  - .manifest
-  - .aob_meta
-  - .md
-  - .yml
-  - .yaml
-  - .txt
 
-EXCLUDE_DIRS:
-  - .git
-  - .venv
-  - build
-  - dist
-  - .gptcontext-cache
-  - __pycache__
-  - .pytest_cache
-  - .mypy_cache
-  - .vscode
-  - .idea
-  # Exclude Splunk app bin/lib subdirs
-  - bin/lib
-  - bin/generated
+exclude:
+- .git/
+- .venv/
+- build/
+- dist/
+- .gptcontext-cache/
+- __pycache__/
+- .pytest_cache/
+- .mypy_cache/
+- .vscode/
+- .idea/
+- bin/lib/
+- bin/generated/
+
+include_exts:
+- .py
+- .conf
+- .json
+- .spec
+- .manifest
+- .aob_meta
+- .md
+- .yml
+- .yaml
+- .txt
+
+
+use_default_excludes: true

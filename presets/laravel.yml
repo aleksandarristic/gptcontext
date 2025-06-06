@@ -3,28 +3,32 @@
 MAX_TOTAL_TOKENS: 15000
 MAX_FILE_TOKENS: 4000
 
-INCLUDE_EXTS:
-  - .php
-  - .blade.php
-  - .js
-  - .json
-  - .md
-  - .yaml
-  - .yml
-  - .env
-  - .html
-  - .scss
-  - .css
-  - .txt
 
-EXCLUDE_DIRS:
-  - .git
-  - vendor
-  - node_modules
-  - storage
-  - bootstrap/cache
-  - dist
-  - build
-  - .idea
-  - .vscode
-  - .gptcontext-cache
+exclude:
+- .git/
+- vendor/
+- node_modules/
+- storage/
+- bootstrap/cache/
+- dist/
+- build/
+- .idea/
+- .vscode/
+- .gptcontext-cache/
+
+include_exts:
+- .php
+- .blade.php
+- .js
+- .json
+- .md
+- .yaml
+- .yml
+- .env
+- .html
+- .scss
+- .css
+- .txt
+
+
+use_default_excludes: true

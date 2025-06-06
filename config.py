@@ -38,18 +38,38 @@ _DEFAULT_CONFIG = {
         ".rb", ".php", ".ini", ".cfg", ".env", ".txt", ".xml"
     },
     
-    # Directory names to exclude from scanning (e.g. build artifacts, virtualenvs, caches)
-    "EXCLUDE_DIRS": {
-        ".git", ".svn", ".hg", "node_modules", "__pycache__", "dist", "build", ".venv",
-        "env", ".mypy_cache", ".pytest_cache", ".vscode", ".idea", ".gptcontext-cache",
-        ".DS_Store", "__snapshots__", ".coverage", ".cache"
-    },
-    
-    # Specific filenames to exclude even if they match allowed extensions
-    "EXCLUDE_FILES": {
-        ".gptcontext.txt", ".gptcontext_message.txt", "README.md", "CHANGELOG.md",
-        "LICENSE", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md", "SECURITY.md"
-    }
+    "use_default_excludes": True,
+    "exclude": [
+        # Directories (with trailing slash)
+        ".git/",
+        ".svn/",
+        ".hg/",
+        "node_modules/",
+        "__pycache__/",
+        "dist/",
+        "build/",
+        ".venv/",
+        "env/",
+        ".mypy_cache/",
+        ".pytest_cache/",
+        ".vscode/",
+        ".idea/",
+        ".gptcontext-cache/",
+        "__snapshots__/",
+        ".coverage/",
+        ".cache/",
+
+        # Files (no trailing slash)
+        ".DS_Store",
+        ".gptcontext.txt",
+        ".gptcontext_message.txt",
+        "README.md",
+        "CHANGELOG.md",
+        "LICENSE",
+        "CONTRIBUTING.md",
+        "CODE_OF_CONDUCT.md",
+        "SECURITY.md",
+    ],
 }
 
 # Path to the template used when generating a ChatGPT message prompt
@@ -170,9 +190,7 @@ GPTCONTEXT_CACHE_DIRNAME = _DEFAULT_CONFIG["GPTCONTEXT_CACHE_DIRNAME"]
 OPENAI_MODEL = _DEFAULT_CONFIG["OPENAI_MODEL"]
 ENCODING_NAME = _DEFAULT_CONFIG["ENCODING_NAME"]
 INCLUDE_EXTS = _DEFAULT_CONFIG["INCLUDE_EXTS"]
-EXCLUDE_DIRS = _DEFAULT_CONFIG["EXCLUDE_DIRS"]
-EXCLUDE_FILES = _DEFAULT_CONFIG["EXCLUDE_FILES"]
-
+EXCLUDE = _DEFAULT_CONFIG["exclude"]
 
 def _update_module_globals():
     """Update module-level globals with current config values."""

@@ -1,8 +1,12 @@
+# file_scanner.py
+
 import os
 from pathlib import Path
 from typing import List, Optional, Set
 
 import pathspec
+
+from exclude_matcher import ExcludeMatcher
 
 import config
 
@@ -10,7 +14,7 @@ import config
 class FileScanner:
     """
     Scans a directory tree (the “scan root”), applying include/exclude rules 
-    (including .gitignore), and returns a sorted list of relevant files.
+    (including .gitignore and ExcludeMatcher), and returns a sorted list of relevant files.
     """
 
     def __init__(
@@ -18,8 +22,7 @@ class FileScanner:
         repo_root: Path,
         scan_root: Path,
         include_exts: Set[str],
-        exclude_dirs: Set[str],
-        exclude_files: Set[str],
+        exclude_matcher: ExcludeMatcher,
         skip_files: Set[str],
         gitignore_spec: Optional[pathspec.PathSpec],
     ) -> None:
@@ -30,10 +33,7 @@ class FileScanner:
             scan_root: The directory to actually walk (relative to repo_root). All files under 
                        scan_root will be considered (subject to excludes).
             include_exts: File extensions to include (e.g., {".py", ".md"}).
-            exclude_dirs: Directory names to skip during traversal 
-                          (e.g., {"node_modules", ".git"}).
-            exclude_files: Specific filenames to skip even if they match allowed extensions 
-                           (e.g., {".gptcontext.txt"}).
+            exclude_matcher: ExcludeMatcher instance to determine excluded files/dirs.
             skip_files: Filenames to skip because they are generated outputs or messages.
             gitignore_spec: A PathSpec compiled from .gitignore (patterns relative to repo_root),
                             or None if there is no .gitignore.
@@ -41,8 +41,7 @@ class FileScanner:
         self.repo_root = repo_root
         self.base_path = scan_root
         self.include_exts = include_exts
-        self.exclude_dirs = exclude_dirs
-        self.exclude_files = exclude_files
+        self.exclude_matcher = exclude_matcher
         self.skip_files = skip_files
         self.gitignore_spec = gitignore_spec
 
@@ -62,8 +61,8 @@ class FileScanner:
         """
         Walk through `scan_root` and collect files that:
           - Have an extension in `include_exts`.
-          - Are not inside any directory in `exclude_dirs`.
-          - Are not named in `exclude_files` or `skip_files`.
+          - Are not inside any directory or file matched by ExcludeMatcher.
+          - Are not named in `skip_files`.
           - Are smaller than MAX_FILE_SIZE_MB (from `config`).
           - Are not ignored by .gitignore (if present).
 
@@ -72,28 +71,40 @@ class FileScanner:
         """
         result: List[Path] = []
         for root, dirs, files in os.walk(self.base_path):
-            # Remove excluded directories from traversal
-            dirs[:] = [d for d in dirs if d not in self.exclude_dirs]
+            rel_root = Path(root).relative_to(self.repo_root)
+
+            # Skip entire dir if excluded
+            if self.exclude_matcher.is_excluded(rel_root, is_dir=True):
+                dirs[:] = []  # prune walk
+                continue
+
+            # Filter subdirs (prune walk)
+            dirs[:] = [
+                d for d in dirs
+                if not self.exclude_matcher.is_excluded(Path(root, d), is_dir=True)
+            ]
+
             for fname in files:
                 full_path = Path(root) / fname
-                # Path relative to scan_root (used for extension and size checks)
-                # rel_scan = full_path.relative_to(self.base_path)  # noqa: F841
-                # Path relative to repo_root (used for .gitignore matching)
                 rel_repo = full_path.relative_to(self.repo_root)
 
-                if (
-                    fname in self.skip_files
-                    or fname in self.exclude_files
-                    or full_path.suffix not in self.include_exts
-                ):
-                    continue
-
-                # Check file size limit
-                if full_path.stat().st_size > config.MAX_FILE_SIZE_MB * 1024 * 1024:
+                # Skip excluded files by name/ext
+                if fname in self.skip_files or full_path.suffix not in self.include_exts:
                     continue
 
                 # Check .gitignore
                 if self._is_ignored(str(rel_repo)):
+                    continue
+
+                # Check ExcludeMatcher
+                why = self.exclude_matcher.why_excluded(rel_repo, is_dir=False)
+                if why:
+                    # Optional: uncomment for debug output
+                    print(f"EXCLUDED {rel_repo} → {why}")
+                    continue
+
+                # Check file size limit
+                if full_path.stat().st_size > config.MAX_FILE_SIZE_MB * 1024 * 1024:
                     continue
 
                 result.append(full_path)

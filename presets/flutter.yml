@@ -3,21 +3,25 @@
 MAX_TOTAL_TOKENS: 15000
 MAX_FILE_TOKENS: 4000
 
-INCLUDE_EXTS:
-  - .dart
-  - .yaml
-  - .yml
-  - .md
-  - .json
-  - .html
-  - .css
-  - .txt
 
-EXCLUDE_DIRS:
-  - .git
-  - build
-  - .dart_tool
-  - .idea
-  - .vscode
-  - .gptcontext-cache
-  - .packages
+exclude:
+- .git/
+- build/
+- .dart_tool/
+- .idea/
+- .vscode/
+- .gptcontext-cache/
+- .packages/
+
+include_exts:
+- .dart
+- .yaml
+- .yml
+- .md
+- .json
+- .html
+- .css
+- .txt
+
+
+use_default_excludes: true

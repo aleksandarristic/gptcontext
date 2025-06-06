@@ -3,27 +3,31 @@
 MAX_TOTAL_TOKENS: 15000
 MAX_FILE_TOKENS: 4000
 
-INCLUDE_EXTS:
-  - .tf
-  - .tfvars
-  - .yaml
-  - .yml
-  - .json
-  - .tpl
-  - .j2
-  - .sh
-  - .md
-  - .txt
 
-EXCLUDE_DIRS:
-  - .git
-  - node_modules
-  - dist
-  - build
-  - bin
-  - tmp
-  - .terraform
-  - .venv
-  - .idea
-  - .vscode
-  - .gptcontext-cache
+exclude:
+- .git/
+- node_modules/
+- dist/
+- build/
+- bin/
+- tmp/
+- .terraform/
+- .venv/
+- .idea/
+- .vscode/
+- .gptcontext-cache/
+
+include_exts:
+- .tf
+- .tfvars
+- .yaml
+- .yml
+- .json
+- .tpl
+- .j2
+- .sh
+- .md
+- .txt
+
+
+use_default_excludes: true

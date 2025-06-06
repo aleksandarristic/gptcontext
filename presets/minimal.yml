@@ -3,20 +3,24 @@
 MAX_TOTAL_TOKENS: 8000
 MAX_FILE_TOKENS: 2000
 
-INCLUDE_EXTS:
-  - .py
-  - .md
-  - .txt
-  - .json
-  - .yaml
-  - .yml
 
-EXCLUDE_DIRS:
-  - .git
-  - node_modules
-  - build
-  - dist
-  - .venv
-  - .idea
-  - .vscode
-  - .gptcontext-cache
+exclude:
+- .git/
+- node_modules/
+- build/
+- dist/
+- .venv/
+- .idea/
+- .vscode/
+- .gptcontext-cache/
+
+include_exts:
+- .py
+- .md
+- .txt
+- .json
+- .yaml
+- .yml
+
+
+use_default_excludes: true

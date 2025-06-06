@@ -3,54 +3,58 @@
 MAX_TOTAL_TOKENS: 20000
 MAX_FILE_TOKENS: 5000
 
-INCLUDE_EXTS:
-  - .py
-  - .js
-  - .jsx
-  - .ts
-  - .tsx
-  - .go
-  - .java
-  - .kt
-  - .rs
-  - .cpp
-  - .c
-  - .h
-  - .hpp
-  - .cs
-  - .swift
-  - .php
-  - .rb
-  - .pl
-  - .sh
-  - .bash
-  - .zsh
-  - .sql
-  - .tf
-  - .yaml
-  - .yml
-  - .json
-  - .toml
-  - .xml
-  - .html
-  - .css
-  - .scss
-  - .sass
-  - .ini
-  - .cfg
-  - .md
-  - .txt
 
-EXCLUDE_DIRS:
-  - .git
-  - node_modules
-  - vendor
-  - dist
-  - build
-  - bin
-  - obj
-  - target
-  - .venv
-  - .idea
-  - .vscode
-  - .gptcontext-cache
+exclude:
+- .git/
+- node_modules/
+- vendor/
+- dist/
+- build/
+- bin/
+- obj/
+- target/
+- .venv/
+- .idea/
+- .vscode/
+- .gptcontext-cache/
+
+include_exts:
+- .py
+- .js
+- .jsx
+- .ts
+- .tsx
+- .go
+- .java
+- .kt
+- .rs
+- .cpp
+- .c
+- .h
+- .hpp
+- .cs
+- .swift
+- .php
+- .rb
+- .pl
+- .sh
+- .bash
+- .zsh
+- .sql
+- .tf
+- .yaml
+- .yml
+- .json
+- .toml
+- .xml
+- .html
+- .css
+- .scss
+- .sass
+- .ini
+- .cfg
+- .md
+- .txt
+
+
+use_default_excludes: true

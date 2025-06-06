@@ -3,23 +3,27 @@
 MAX_TOTAL_TOKENS: 15000
 MAX_FILE_TOKENS: 4000
 
-INCLUDE_EXTS:
-  - .tex
-  - .bib
-  - .cls
-  - .sty
-  - .md
-  - .yaml
-  - .yml
-  - .json
-  - .txt
-  - .pdf
 
-EXCLUDE_DIRS:
-  - .git
-  - build
-  - out
-  - _minted-*
-  - .idea
-  - .vscode
-  - .gptcontext-cache
+exclude:
+- .git/
+- build/
+- out/
+- _minted-*/
+- .idea/
+- .vscode/
+- .gptcontext-cache/
+
+include_exts:
+- .tex
+- .bib
+- .cls
+- .sty
+- .md
+- .yaml
+- .yml
+- .json
+- .txt
+- .pdf
+
+
+use_default_excludes: true

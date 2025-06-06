@@ -3,40 +3,44 @@
 MAX_TOTAL_TOKENS: 20000
 MAX_FILE_TOKENS: 5000
 
-INCLUDE_EXTS:
-  - .py
-  - .js
-  - .ts
-  - .jsx
-  - .tsx
-  - .go
-  - .java
-  - .kt
-  - .rs
-  - .cpp
-  - .c
-  - .h
-  - .md
-  - .json
-  - .toml
-  - .yaml
-  - .yml
-  - .sh
-  - .html
-  - .css
-  - .tf
-  - .tfvars
 
-EXCLUDE_DIRS:
-  - .git
-  - node_modules
-  - vendor
-  - dist
-  - build
-  - target
-  - bin
-  - obj
-  - .venv
-  - .idea
-  - .vscode
-  - .gptcontext-cache
+exclude:
+- .git/
+- node_modules/
+- vendor/
+- dist/
+- build/
+- target/
+- bin/
+- obj/
+- .venv/
+- .idea/
+- .vscode/
+- .gptcontext-cache/
+
+include_exts:
+- .py
+- .js
+- .ts
+- .jsx
+- .tsx
+- .go
+- .java
+- .kt
+- .rs
+- .cpp
+- .c
+- .h
+- .md
+- .json
+- .toml
+- .yaml
+- .yml
+- .sh
+- .html
+- .css
+- .tf
+- .tfvars
+
+
+use_default_excludes: true
