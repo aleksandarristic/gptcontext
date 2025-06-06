@@ -186,14 +186,14 @@ def main() -> None:
 
     # 1) Update .gitignore
     gim = GitignoreManager(base_path)
-    gim.ensure_entries(
-        [
-            cfg.CONTEXT_OUTPUT_FILENAME,
-            cfg.MESSAGE_OUTPUT_FILENAME,
-            f"{cfg.GPTCONTEXT_CACHE_DIRNAME}/",
-            config.LOCAL_CONFIG_FILENAME,  # Also ignore the local config file
-        ]
-    )
+    # gim.ensure_entries(
+    #     [
+    #         cfg.CONTEXT_OUTPUT_FILENAME,
+    #         cfg.MESSAGE_OUTPUT_FILENAME,
+    #         f"{cfg.GPTCONTEXT_CACHE_DIRNAME}/",
+    #         config.LOCAL_CONFIG_FILENAME,  # Also ignore the local config file
+    #     ]
+    # )
     spec = gim.load_spec()
 
     # 2) Scan files

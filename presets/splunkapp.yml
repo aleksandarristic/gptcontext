@@ -1,8 +1,6 @@
 # Python Splunk App (e.g. modular input or Add-on Builder app)
 
 MAX_TOTAL_TOKENS: 12000
-MAX_FILE_TOKENS: 4000
-
 
 exclude:
 - .git/
@@ -17,6 +15,8 @@ exclude:
 - .idea/
 - bin/lib/
 - bin/generated/
+- bin/ta_*/aob_py3/
+- appserver/
 
 include_exts:
 - .py
@@ -24,11 +24,10 @@ include_exts:
 - .json
 - .spec
 - .manifest
-- .aob_meta
+# - .aob_meta
 - .md
 - .yml
 - .yaml
 - .txt
-
 
 use_default_excludes: true
