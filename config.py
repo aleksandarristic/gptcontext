@@ -1,7 +1,11 @@
+import logging
 from pathlib import Path
 from typing import Any, Optional
 
 import yaml
+
+logger = logging.getLogger(__name__)
+
 
 # Absolute path to the directory where this config file resides
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -60,7 +64,9 @@ class ConfigManager:
     Manages configuration with support for local overrides via .gptcontext-config.yml
     """
 
-    def __init__(self, base_path: Optional[Path] = None, config_file: Optional[Path] = None):
+    def __init__(
+        self, base_path: Optional[Path] = None, config_file: Optional[Path] = None
+    ):
         """
         Args:
           base_path: directory to search for .gptcontext-config.yml (ignored if config_file is set)
@@ -93,22 +99,21 @@ class ConfigManager:
                     else:
                         self._config[key] = value
                 else:
-                    print(
+                    logger.warning(
                         f"Warning: Unknown config key '{key}' in {LOCAL_CONFIG_FILENAME}"
                     )
 
-            print(f"✓ Loaded local config from {LOCAL_CONFIG_FILENAME}")
+            logger.info(f"✓ Loaded local config from {LOCAL_CONFIG_FILENAME}")
 
         except yaml.YAMLError as e:
-            print(f"Warning: Failed to parse {LOCAL_CONFIG_FILENAME}: {e}")
+            logger.warning(f"Failed to parse {LOCAL_CONFIG_FILENAME}: {e}")
         except Exception as e:
-            print(f"Warning: Failed to load {LOCAL_CONFIG_FILENAME}: {e}")
-
+            logger.warning(f"Failed to load {LOCAL_CONFIG_FILENAME}: {e}")
 
     def _load_explicit_config(self, config_path: Path) -> None:
         """Load and apply overrides from exactly this file."""
         if not config_path.exists():
-            print(f"Warning: Config file {config_path} not found.")
+            logger.warning(f"Config file {config_path} not found.")
             return
         try:
             with open(config_path, "r", encoding="utf-8") as f:
@@ -120,14 +125,15 @@ class ConfigManager:
                     else:
                         self._config[key] = value
                 else:
-                    print(f"Warning: Unknown config key '{key}' in {config_path.name}")
-            print(f"✓ Loaded explicit config from {config_path}")
+                    logger.warning(
+                        f"Unknown config key '{key}' in {config_path.name}"
+                    )
+            logger.info(f"✓ Loaded explicit config from {config_path}")
         except yaml.YAMLError as e:
-            print(f"Warning: Failed to parse {config_path}: {e}")
+            logger.warning(f"Failed to parse {config_path}: {e}")
         except Exception as e:
-            print(f"Warning: Failed to load {config_path}: {e}")
-    
-    
+            logger.warning(f"Failed to load {config_path}: {e}")
+
     def get(self, key: str, default: Any = None) -> Any:
         """Get a configuration value."""
         return self._config.get(key, default)
@@ -192,7 +198,9 @@ def _update_module_globals():
 
 
 # Override init_config to also update globals
-def init_config(base_path: Optional[Path] = None, config_file: Optional[Path] = None) -> None:
+def init_config(
+    base_path: Optional[Path] = None, config_file: Optional[Path] = None
+) -> None:
     """
     Initialize the global config manager.
     If config_file is provided, load overrides from that file instead of searching for

@@ -49,6 +49,7 @@ class ContextBuilder:
     def __init__(
         self,
         cache_dir: Path,
+        scan_root: Path,
         model: str,
         max_file_tokens: int,
         max_total_tokens: int,
@@ -63,6 +64,7 @@ class ContextBuilder:
             summarize_large: If True, attempt to summarize any file whose token count exceeds max_file_tokens.
         """
         self.cache_dir = cache_dir
+        self.scan_root = scan_root
         self.base_path = cache_dir.parent
         self.model = model
         self.max_file_tokens = max_file_tokens

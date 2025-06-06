@@ -15,7 +15,8 @@ class FileScanner:
 
     def __init__(
         self,
-        base_path: Path,
+        repo_root: Path,
+        scan_root: Path,
         include_exts: Set[str],
         exclude_dirs: Set[str],
         exclude_files: Set[str],
@@ -31,7 +32,8 @@ class FileScanner:
             skip_files: Filenames to skip because they are outputs (context/message).
             gitignore_spec: A PathSpec compiled from .gitignore, or None.
         """
-        self.base_path = base_path
+        self.repo_root = repo_root
+        self.base_path = scan_root
         self.include_exts = include_exts
         self.exclude_dirs = exclude_dirs
         self.exclude_files = exclude_files
@@ -68,7 +70,11 @@ class FileScanner:
             dirs[:] = [d for d in dirs if d not in self.exclude_dirs]
             for fname in files:
                 full_path = Path(root) / fname
-                rel = full_path.relative_to(self.base_path)
+                # Path relative to scan_root (used for extension/size checks)
+                rel_scan = full_path.relative_to(self.base_path)  # noqa: F841
+                # Path relative to repo_root (used for .gitignore matching)
+                rel_repo = full_path.relative_to(self.repo_root)
+
                 if (
                     fname in self.skip_files
                     or fname in self.exclude_files
@@ -81,7 +87,7 @@ class FileScanner:
                     continue
 
                 # Check .gitignore
-                if self._is_ignored(str(rel)):
+                if self._is_ignored(str(rel_repo)):
                     continue
 
                 result.append(full_path)

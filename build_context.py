@@ -99,11 +99,18 @@ def main() -> None:
         help="Continue processing even if some summaries fail (not recommended for quota errors)",
     )
     args = parser.parse_args()
+
+    logging.basicConfig(
+        level=logging.DEBUG if args.verbose else logging.INFO,
+        format="%(message)s",
+    )
+
     base_path = Path(args.base).resolve()
     if args.config_file:
         config.init_config(base_path, Path(args.config_file))
     else:
         config.init_config(base_path)
+    cfg = config.get_config()
 
     # Determine the “scan” root. If --scan-dir is provided, interpret relative to base_path.
     if args.scan_dir:
@@ -121,20 +128,6 @@ def main() -> None:
     subfolder = scan_root.name
     output_base = out_root / subfolder
     output_base.mkdir(parents=True, exist_ok=True)
-
-    logging.basicConfig(
-        level=logging.DEBUG if args.verbose else logging.INFO,
-        format="%(message)s",
-    )
-
-    base_path = Path(args.base).resolve()
-
-    # Initialize config with the base path to load local overrides
-    if args.config_file:
-        config.init_config(base_path, Path(args.config_file))
-    else:
-        config.init_config(base_path)
-    cfg = config.get_config()
 
     # Validate summarization requirements
     if args.summarize:
@@ -161,7 +154,8 @@ def main() -> None:
 
     # 2) Scan files
     scanner = FileScanner(
-        base_path=scan_root,
+        repo_root=base_path,
+        scan_root=scan_root,
         include_exts=cfg.INCLUDE_EXTS,
         exclude_dirs=cfg.EXCLUDE_DIRS,
         exclude_files=cfg.EXCLUDE_FILES,
@@ -179,6 +173,7 @@ def main() -> None:
     # 4) Build context
     builder = ContextBuilder(
         cache_dir=cache_dir,
+        scan_root=scan_root,
         model=cfg.OPENAI_MODEL,
         max_file_tokens=args.file_token_threshold or cfg.MAX_FILE_TOKENS,
         max_total_tokens=args.max_tokens,
@@ -213,7 +208,7 @@ def main() -> None:
 
     # Warn if we have failures
     if failed_count > 0:
-        logger.warning(f"WARNING: {failed_count} files could not be processed")
+        logger.warning(f"{failed_count} files could not be processed")
         logger.warning("Consider running with --verbose to see detailed errors")
 
     if args.dry_run:
