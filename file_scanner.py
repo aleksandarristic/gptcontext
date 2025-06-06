@@ -9,8 +9,8 @@ import config
 
 class FileScanner:
     """
-    Scans a directory tree, applying include/exclude rules (including .gitignore),
-    and returns a sorted list of relevant files.
+    Scans a directory tree (the “scan root”), applying include/exclude rules 
+    (including .gitignore), and returns a sorted list of relevant files.
     """
 
     def __init__(
@@ -25,13 +25,18 @@ class FileScanner:
     ) -> None:
         """
         Args:
-            repo_root: The repository root (where .gitignore lives). Patterns are matched against paths relative to this.
-            scan_root: The subdirectory to actually walk (relative to repo_root). If omitted, scan_root defaults to repo_root.
-            include_exts: File extensions to include (e.g. {".py", ".md"}).
-            exclude_dirs: Directory names to skip (e.g. {"node_modules", ".git"}).
-            exclude_files: Specific filenames to skip (e.g. {".gptcontext.txt"}).
-            skip_files: Filenames to skip because they are outputs (context/message).
-            gitignore_spec: A PathSpec compiled from .gitignore, or None.
+            repo_root: The repository root (where .gitignore lives). Patterns in .gitignore 
+                       are matched against paths relative to this directory.
+            scan_root: The directory to actually walk (relative to repo_root). All files under 
+                       scan_root will be considered (subject to excludes).
+            include_exts: File extensions to include (e.g., {".py", ".md"}).
+            exclude_dirs: Directory names to skip during traversal 
+                          (e.g., {"node_modules", ".git"}).
+            exclude_files: Specific filenames to skip even if they match allowed extensions 
+                           (e.g., {".gptcontext.txt"}).
+            skip_files: Filenames to skip because they are generated outputs or messages.
+            gitignore_spec: A PathSpec compiled from .gitignore (patterns relative to repo_root),
+                            or None if there is no .gitignore.
         """
         self.repo_root = repo_root
         self.base_path = scan_root
@@ -43,10 +48,10 @@ class FileScanner:
 
     def _is_ignored(self, rel_path: str) -> bool:
         """
-        Check .gitignore spec (if any) for the given relative path.
+        Check the .gitignore spec (if any) for the given relative path.
 
         Args:
-            rel_path: A path string relative to base_path.
+            rel_path: A path string relative to `repo_root`.
 
         Returns:
             True if the path matches .gitignore; False otherwise.
@@ -55,15 +60,15 @@ class FileScanner:
 
     def list_files(self) -> List[Path]:
         """
-        Walk through `base_path` and collect files that:
+        Walk through `scan_root` and collect files that:
           - Have an extension in `include_exts`.
-          - Are not in `exclude_dirs`.
+          - Are not inside any directory in `exclude_dirs`.
           - Are not named in `exclude_files` or `skip_files`.
-          - Are smaller than MAX_FILE_SIZE_MB.
+          - Are smaller than MAX_FILE_SIZE_MB (from `config`).
           - Are not ignored by .gitignore (if present).
 
         Returns:
-            A list of Path objects, sorted by ascending file size.
+            A list of Path objects (absolute), sorted by ascending file size.
         """
         result: List[Path] = []
         for root, dirs, files in os.walk(self.base_path):
@@ -71,8 +76,8 @@ class FileScanner:
             dirs[:] = [d for d in dirs if d not in self.exclude_dirs]
             for fname in files:
                 full_path = Path(root) / fname
-                # Path relative to scan_root (used for extension/size checks)
-                rel_scan = full_path.relative_to(self.base_path)  # noqa: F841
+                # Path relative to scan_root (used for extension and size checks)
+                # rel_scan = full_path.relative_to(self.base_path)  # noqa: F841
                 # Path relative to repo_root (used for .gitignore matching)
                 rel_repo = full_path.relative_to(self.repo_root)
 

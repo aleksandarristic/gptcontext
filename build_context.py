@@ -41,7 +41,7 @@ def write_message_template(context: str, message_path: Path) -> None:
     message = Template(template_text).substitute(context=context)
     try:
         message_path.write_text(message, encoding="utf-8")
-        logger.info(f'✓ Wrote message file to "{message_path.name}"')
+        logger.info(f'✓ Wrote message file to "{message_path}"')
     except Exception as e:
         logger.error(f"Failed to write message template to {message_path}: {e}")
 

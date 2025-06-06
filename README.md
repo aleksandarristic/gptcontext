@@ -1,185 +1,277 @@
 # GPTContext
 
-**GPTContext** is a CLI tool that builds a context file from your codebase for use with LLMs like ChatGPT. It scans source files, optionally summarizes large files using OpenAI, and writes a token-bounded context to a single file.
+`gptcontext` is a small CLI utility (and underlying Python library) that scans your codebase, applies include/exclude rules (including `.gitignore`), optionally summarizes large files via OpenAI, and outputs a single “context” file for LLM-assisted workflows. This can be used to feed a chat history or prompt into GPT to help it understand your code.
+
+---
+
+## Table of Contents
+
+1. [Features](#features)  
+2. [Installation](#installation)  
+3. [Configuration](#configuration)  
+4. [Basic Usage](#basic-usage)  
+5. [Advanced Usage](#advanced-usage)  
+   - [Using a Local Override (`.gptcontext-config.yml`)](#using-a-local-override)  
+   - [Summarizing Large Files](#summarizing-large-files)  
+   - [Generating a Message Template](#generating-a-message-template)  
+   - [Dry Run (Preview Only)](#dry-run-preview-only)  
+6. [Python API Usage](#python-api-usage)  
+7. [Tests](#tests)  
+8. [License](#license)  
 
 ---
 
 ## Features
 
-- Recursively scans project directories  
-- Honors `.gitignore`  
-- Configuration entirely in `config.py` (no JSON config)  
-- Optionally summarizes large files using OpenAI API  
-- Caches summaries for efficiency  
-- Limits output by total token count  
+- **Selective scanning**: Only files with specified extensions (e.g., `.py`, `.md`) are included.  
+- **.gitignore support**: Honors your existing `.gitignore` so you don’t accidentally include unwanted files.  
+- **Directory exclusions**: Skip common directories like `node_modules`, `.git`, `dist`, etc.  
+- **File-size limit**: Automatically skip files larger than a configured megabyte threshold.  
+- **Optional OpenAI summarization**: If a file is too large (token-wise), ask OpenAI to produce a concise summary instead of including the entire file.  
+- **Caching**: Summaries are cached so you only pay for summarization once per unique file content.  
+- **Message template**: Generate a “context + message” prompt that’s ready to send to a GPT model.  
+- **Dry-run mode**: Preview which files would be included/skipped without writing anything to disk.  
 
 ---
 
-## Requirements
+## Installation
 
-- Python 3.7+
-- `openai`, `tiktoken`, `pathspec`
+1. Clone the repository (or add it as a dependency in your project):
 
----
+   ```bash
+   git clone https://github.com/your-org/gptcontext.git
+   cd gptcontext
+   ```
 
-## Installation and Usage
+2. (Optional) Create a virtual environment and activate it:
 
-### 1. Clone the repository
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
 
-```bash
-git clone https://github.com/aleksandarristic/gptcontext.git
-cd gptcontext
-```
+3. Install runtime dependencies:
 
-### 2. Set up virtual environment and install dependencies
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
+4. Install dev dependencies (for running tests):
 
-### 3. Set up a shell alias (optional)
-
-Edit your `~/.zshrc` or `~/.bashrc`:
-
-```bash
-# Set the path to where you cloned the repo
-CONTEXT_DIR="$HOME/Code/gptcontext"  # adjust as needed
-
-# Define the alias
-alias gptcontext="$CONTEXT_DIR/.venv/bin/python $CONTEXT_DIR/build_context.py --base ."
-```
-
-Then reload your shell:
-
-```bash
-source ~/.zshrc  # or ~/.bashrc
-```
-
----
-
-## CLI Usage
-
-### Run with defaults
-
-```bash
-python build_context.py
-```
-
-This will:
-- Scan the current directory
-- Use configuration from `config.py`
-- Write `.gptcontext.txt`
-
-### Summarize large files
-
-```bash
-python build_context.py --summarize
-```
-
-Files over the configured token threshold will be summarized using the OpenAI API (requires `OPENAI_API_KEY`).
-
-### Other options
-
-- Set max total tokens:
-
-  ```bash
-  python build_context.py --max-tokens 8000
-  ```
-
-- Change output file:
-
-  ```bash
-  python build_context.py --output alt_context.txt
-  ```
-
-- Use a different base directory:
-
-  ```bash
-  python build_context.py --base ../myproject
-  ```
-
-- Enable debug logging:
-
-  ```bash
-  python build_context.py --verbose
-  ```
-
-- Generate a message template for ChatGPT:
-
-  ```bash
-  python build_context.py --generate-message
-  ```
+   ```bash
+   pip install -r requirements-dev.txt
+   ```
 
 ---
 
 ## Configuration
 
-All configuration is defined in `config.py`:
+All default settings (token limits, included extensions, excluded directories, etc.) live in `config.py` under `_DEFAULT_CONFIG`. You can override these on a per-project basis by creating a file named `.gptcontext-config.yml` at your repository root. Any keys in `_DEFAULT_CONFIG` can be overridden; for example:
 
-- `INCLUDE_EXTS`: file extensions to include
-- `EXCLUDE_DIRS`: directories to exclude
-- `EXCLUDE_FILES`: filenames to exclude
-- `MAX_TOTAL_TOKENS`, `MAX_FILE_TOKENS`, `MAX_FILE_SIZE_MB`
-- Output and model settings
+```yaml
+MAX_TOTAL_TOKENS: 8000
+MAX_FILE_TOKENS: 3000
+INCLUDE_EXTS:
+  - .py
+  - .md
+EXCLUDE_DIRS:
+  - node_modules
+  - dist
+  - .venv
+```
 
-There is no support for external config files (`config.json` is removed).
+When you run the CLI, if no explicit `--config-file` is provided, it will automatically look for `.gptcontext-config.yml` in your working directory.
 
 ---
 
-## OpenAI API Key
+## Basic Usage
 
-If using summarization, set your key via:
+### 1. Initialize config (optional)
+
+By default, the CLI assumes your “base” directory is `.` (current working directory). If you have a `.gptcontext-config.yml` in that folder, it’ll be loaded automatically.
+
+_No explicit command is needed; just ensure `.gptcontext-config.yml` exists if you want overrides._
+
+### 2. Run `build_context.py`
 
 ```bash
-export OPENAI_API_KEY=sk-...
+python build_context.py --base . --max-tokens 12000
+```
+
+- `--base .`  
+  Means “look in the current directory for source files.”
+- `--max-tokens 12000`  
+  Total token budget across all included files (summaries count as tokens).
+- By default, **no summarization** is done. If any file has more than `MAX_FILE_TOKENS`, it will simply be skipped.
+
+After running, you’ll see:
+
+```text
+✓ Appended [...ignored patterns...] to .gitignore
+✓ Building context from 42 files (parallel loading)...
+--- Context Build Summary ---
+Files included in full:     35
+Files included as summary:  0
+Files failed to process:    0
+Total tokens used:          3456 / 12000
+✓ Wrote context file to "/home/user/.gptcontext/<your-folder>/.gptcontext.txt"
+Completed successfully
+```
+
+Your generated context file will live here by default:
+
+```
+~/.gptcontext/<scan_root_folder>/.gptcontext.txt
 ```
 
 ---
 
-## Output Example
+## Advanced Usage
 
-The generated `.gptcontext.txt` contains:
+### Using a Local Override
 
+If you want to override any of the default settings on a per-project basis, create a file named `.gptcontext-config.yml` in your repo root. Example:
+
+```yaml
+# .gptcontext-config.yml
+MAX_TOTAL_TOKENS: 8000
+MAX_FILE_TOKENS: 2500
+INCLUDE_EXTS:
+  - .py
+  - .md
+  - .json
+EXCLUDE_DIRS:
+  - node_modules
+  - dist
+  - .venv
+EXCLUDE_FILES:
+  - SECRET_CONFIG.yaml
 ```
-# app/main.py
-<source code>
 
-# Summary of app/large_module.py
-<LLM-generated summary>
-```
-
----
-
-## Message Template
-
-To generate a ChatGPT-ready message, use:
+Then simply run without any special flags:
 
 ```bash
-python build_context.py --generate-message
+python build_context.py --base . --max-tokens 8000
 ```
 
-It reads from `message_sample.txt` and outputs a filled message to `.gptcontext_message.txt`.
+Your overrides from `.gptcontext-config.yml` will be loaded automatically.
 
-Example structure:
+---
 
+### Summarizing Large Files
+
+If you have very large files (token-wise) and want GPT to generate summaries instead of skipping them entirely, pass the `--summarize` flag. You must have `$OPENAI_API_KEY` set in your environment.
+
+```bash
+export OPENAI_API_KEY="sk-xxxx"
+python build_context.py --base . --max-tokens 12000 --file-token-threshold 3000 --summarize
 ```
-You are helping me with this codebase.
 
-Below is a sample of files from the project. Use this as your working context.
+- `--file-token-threshold 3000`  
+  If a file has more than 3000 tokens, we ask GPT to summarize it.  
+- Summaries (once fetched) are cached under `~/.gptcontext/<scan_root>/.gptcontext-cache/`.  
+- If summarization fails (or quota is exceeded), the file is skipped (unless you pass `--continue-on-error`).
 
-<context starts>
+---
 
-<paste contents of .gptcontext.txt here>
+### Generating a Message Template
 
-<context ends>
+Once you have a context file, you may want to inject it into a chat prompt. If you provide a `message_sample.txt` (the default shipped template), you can ask the CLI to fill it in:
 
-Now, ...
+```bash
+# Example message_sample.txt (in the code repo):
+# You are helping me with my code. Below is the generated context:
+#
+# ${context}
+#
+# Now can you explain the main logic?
+
+python build_context.py --base . --generate-message
 ```
+
+This will create `~/.gptcontext/<scan_root>/.gptcontext_message.txt`, where the placeholder `${context}` is replaced by the full `.gptcontext.txt` content.
+
+---
+
+### Dry Run (Preview Only)
+
+If you just want to see which files would be included/skipped (and how many tokens each contributes) without writing any files, use:
+
+```bash
+python build_context.py --base . --max-tokens 12000 --dry-run
+```
+
+You will see logs about which files are included or skipped, but no `.gptcontext.txt` is written.
+
+---
+
+## Python API Usage
+
+All the core functionality is also exposed as Python classes/functions. You can integrate them into your own scripts:
+
+```python
+from pathlib import Path
+from gitignore_manager import GitignoreManager
+from file_scanner import FileScanner
+from context_builder import ContextBuilder
+import config
+
+# 1) Initialize config
+config.init_config(base_path=Path("/path/to/project"))
+
+# 2) Update .gitignore
+base_path = Path("/path/to/project")
+gim = GitignoreManager(base_path)
+gim.ensure_entries([
+    config.CONTEXT_OUTPUT_FILENAME,
+    config.MESSAGE_OUTPUT_FILENAME,
+    f"{config.GPTCONTEXT_CACHE_DIRNAME}/",
+    config.LOCAL_CONFIG_FILENAME,
+])
+spec = gim.load_spec()
+
+# 3) Scan for files
+scanner = FileScanner(
+    repo_root=base_path,
+    scan_root=base_path,
+    include_exts=config.INCLUDE_EXTS,
+    exclude_dirs=config.EXCLUDE_DIRS,
+    exclude_files=config.EXCLUDE_FILES,
+    skip_files={config.CONTEXT_OUTPUT_FILENAME, config.MESSAGE_OUTPUT_FILENAME},
+    gitignore_spec=spec,
+)
+files = scanner.list_files()
+
+# 4) Build context (no summarization)
+builder = ContextBuilder(
+    cache_dir=Path.home() / ".gptcontext_cache",
+    scan_root=base_path,
+    model=config.OPENAI_MODEL,
+    max_file_tokens=config.MAX_FILE_TOKENS,
+    max_total_tokens=config.MAX_TOTAL_TOKENS,
+    summarize_large=False,
+)
+context_str, total_used, full_count, summary_count, failed_count = builder.build(files)
+
+print(f"Including {full_count} full files, {summary_count} summaries.")
+print("Generated context (first 500 chars):")
+print(context_str[:500])
+```
+
+---
+
+## Tests
+
+To run the test suite, simply:
+
+```bash
+pytest -q
+```
+
+The tests have been updated to reflect the current constructor signatures and behavior of each component.
 
 ---
 
 ## License
 
-MIT License
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
