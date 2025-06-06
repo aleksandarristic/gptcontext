@@ -25,7 +25,8 @@ class FileScanner:
     ) -> None:
         """
         Args:
-            base_path: Root directory to scan.
+            repo_root: The repository root (where .gitignore lives). Patterns are matched against paths relative to this.
+            scan_root: The subdirectory to actually walk (relative to repo_root). If omitted, scan_root defaults to repo_root.
             include_exts: File extensions to include (e.g. {".py", ".md"}).
             exclude_dirs: Directory names to skip (e.g. {"node_modules", ".git"}).
             exclude_files: Specific filenames to skip (e.g. {".gptcontext.txt"}).

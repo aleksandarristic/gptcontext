@@ -100,7 +100,7 @@ class ConfigManager:
                         self._config[key] = value
                 else:
                     logger.warning(
-                        f"Warning: Unknown config key '{key}' in {LOCAL_CONFIG_FILENAME}"
+                        f"Unknown config key '{key}' in {LOCAL_CONFIG_FILENAME}"
                     )
 
             logger.info(f"✓ Loaded local config from {LOCAL_CONFIG_FILENAME}")

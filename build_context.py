@@ -179,8 +179,6 @@ def main() -> None:
         max_total_tokens=args.max_tokens,
         summarize_large=args.summarize,
     )
-    # Force ContextBuilder.base_path to be the scan root, not cache_dir.parent
-    builder.base_path = scan_root
 
     try:
         context_str, total_used, full_count, summary_count, failed_count = (
