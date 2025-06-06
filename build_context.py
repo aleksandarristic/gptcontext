@@ -106,10 +106,45 @@ def main() -> None:
     )
 
     base_path = Path(args.base).resolve()
+
+    # Determine the “scan” root. If --scan-dir is provided, interpret relative to base_path.
+    if args.scan_dir:
+        scan_root = (base_path / args.scan_dir).resolve()
+        if not scan_root.exists() or not scan_root.is_dir():
+            logger.error(f"ERROR: scan directory {scan_root} does not exist or is not a directory")
+            sys.exit(1)
+    else:
+        scan_root = base_path
+
+    # Config file lookup logic
+    config_path = None
     if args.config_file:
-        config.init_config(base_path, Path(args.config_file))
+        candidate_paths = [
+            Path(__file__).parent / args.config_file,    # relative to build_context.py
+            base_path / args.config_file,                # relative to repo root (--base)
+        ]
+        if args.scan_dir:
+            candidate_paths.append(scan_root / args.config_file)  # relative to scan_dir
+
+        # Pick first existing one
+        for path in candidate_paths:
+            if path.exists():
+                config_path = path.resolve()
+                break
+
+        if config_path:
+            logger.info(f'✓ Using config file "{config_path}"')
+            config.init_config(base_path, config_path)
+        else:
+            logger.error(f'ERROR: config file "{args.config_file}" not found in any of the expected locations:')
+            logger.error(f'  - {candidate_paths[0]}')
+            logger.error(f'  - {candidate_paths[1]}')
+            if args.scan_dir:
+                logger.error(f'  - {candidate_paths[2]}')
+            sys.exit(1)
     else:
         config.init_config(base_path)
+
     cfg = config.get_config()
 
     # Determine the “scan” root. If --scan-dir is provided, interpret relative to base_path.

@@ -1,0 +1,22 @@
+# API Gateway / Kong / NGINX config repo
+
+MAX_TOTAL_TOKENS: 12000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .yaml
+  - .yml
+  - .json
+  - .conf
+  - .lua
+  - .md
+  - .txt
+  - .sh
+
+EXCLUDE_DIRS:
+  - .git
+  - logs
+  - tmp
+  - .idea
+  - .vscode
+  - .gptcontext-cache

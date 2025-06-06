@@ -1,0 +1,32 @@
+# Ruby on Rails project
+
+MAX_TOTAL_TOKENS: 15000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .rb
+  - .erb
+  - .haml
+  - .slim
+  - .js
+  - .json
+  - .yml
+  - .yaml
+  - .md
+  - .html
+  - .scss
+  - .css
+  - .txt
+
+EXCLUDE_DIRS:
+  - .git
+  - log
+  - tmp
+  - node_modules
+  - vendor
+  - public/assets
+  - storage
+  - .bundle
+  - .idea
+  - .vscode
+  - .gptcontext-cache

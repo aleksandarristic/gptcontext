@@ -1,0 +1,27 @@
+# Unreal Engine project
+
+MAX_TOTAL_TOKENS: 15000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .cpp
+  - .h
+  - .hpp
+  - .uproject
+  - .uplugin
+  - .ini
+  - .json
+  - .yaml
+  - .yml
+  - .md
+  - .txt
+
+EXCLUDE_DIRS:
+  - .git
+  - Binaries
+  - Intermediate
+  - Saved
+  - DerivedDataCache
+  - .idea
+  - .vscode
+  - .gptcontext-cache

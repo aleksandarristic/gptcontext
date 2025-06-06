@@ -1,0 +1,29 @@
+# Infra only — IaC configs (Terraform, Ansible, Helm, K8s YAML)
+
+MAX_TOTAL_TOKENS: 15000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .tf
+  - .tfvars
+  - .yaml
+  - .yml
+  - .json
+  - .tpl
+  - .j2
+  - .sh
+  - .md
+  - .txt
+
+EXCLUDE_DIRS:
+  - .git
+  - node_modules
+  - dist
+  - build
+  - bin
+  - tmp
+  - .terraform
+  - .venv
+  - .idea
+  - .vscode
+  - .gptcontext-cache

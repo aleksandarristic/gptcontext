@@ -1,0 +1,22 @@
+# Haskell project (Stack or Cabal)
+
+MAX_TOTAL_TOKENS: 12000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .hs
+  - .lhs
+  - .cabal
+  - .yaml
+  - .yml
+  - .md
+  - .json
+  - .txt
+
+EXCLUDE_DIRS:
+  - .git
+  - dist
+  - .stack-work
+  - .idea
+  - .vscode
+  - .gptcontext-cache

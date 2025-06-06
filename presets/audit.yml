@@ -1,0 +1,40 @@
+# Optimized for security audit — show configs, envs, keys, secrets
+
+MAX_TOTAL_TOKENS: 15000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .env
+  - .yaml
+  - .yml
+  - .json
+  - .toml
+  - .ini
+  - .cfg
+  - .xml
+  - .properties
+  - .conf
+  - .sh
+  - .bash
+  - .zsh
+  - .md
+  - .txt
+  - .pem
+  - .crt
+  - .key
+
+EXCLUDE_DIRS:
+  - .git
+  - node_modules
+  - dist
+  - build
+  - vendor
+  - public
+  - static
+  - data
+  - tmp
+  - logs
+  - .venv
+  - .idea
+  - .vscode
+  - .gptcontext-cache

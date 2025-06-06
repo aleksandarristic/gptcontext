@@ -1,0 +1,30 @@
+# React Native / Ionic app
+
+MAX_TOTAL_TOKENS: 15000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .js
+  - .jsx
+  - .ts
+  - .tsx
+  - .json
+  - .yaml
+  - .yml
+  - .html
+  - .css
+  - .scss
+  - .md
+  - .txt
+
+EXCLUDE_DIRS:
+  - .git
+  - node_modules
+  - android/build
+  - ios/build
+  - ios/Pods
+  - dist
+  - build
+  - .idea
+  - .vscode
+  - .gptcontext-cache

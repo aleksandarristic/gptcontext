@@ -1,0 +1,23 @@
+# Go project
+
+MAX_TOTAL_TOKENS: 10000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .go
+  - .mod
+  - .sum
+  - .md
+  - .json
+  - .yaml
+  - .yml
+  - .txt
+
+EXCLUDE_DIRS:
+  - .git
+  - vendor
+  - dist
+  - build
+  - .gptcontext-cache
+  - .vscode
+  - .idea

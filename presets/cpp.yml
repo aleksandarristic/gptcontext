@@ -1,0 +1,27 @@
+# C / C++ project
+
+MAX_TOTAL_TOKENS: 12000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .c
+  - .cpp
+  - .cc
+  - .h
+  - .hpp
+  - .md
+  - .yaml
+  - .yml
+  - .json
+  - .txt
+  - .cmake
+  - CMakeLists.txt
+
+EXCLUDE_DIRS:
+  - .git
+  - build
+  - bin
+  - obj
+  - .idea
+  - .vscode
+  - .gptcontext-cache

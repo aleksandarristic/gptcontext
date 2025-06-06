@@ -1,0 +1,38 @@
+# Backend app only — API / server code
+
+MAX_TOTAL_TOKENS: 15000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .py
+  - .go
+  - .java
+  - .kt
+  - .rs
+  - .cpp
+  - .c
+  - .h
+  - .cs
+  - .php
+  - .rb
+  - .yaml
+  - .yml
+  - .json
+  - .ini
+  - .cfg
+  - .md
+  - .txt
+
+EXCLUDE_DIRS:
+  - .git
+  - node_modules
+  - dist
+  - build
+  - public
+  - static
+  - tmp
+  - data
+  - .venv
+  - .idea
+  - .vscode
+  - .gptcontext-cache

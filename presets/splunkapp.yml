@@ -1,0 +1,31 @@
+# Python Splunk App (e.g. modular input or Add-on Builder app)
+
+MAX_TOTAL_TOKENS: 12000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .py
+  - .conf
+  - .json
+  - .spec
+  - .manifest
+  - .aob_meta
+  - .md
+  - .yml
+  - .yaml
+  - .txt
+
+EXCLUDE_DIRS:
+  - .git
+  - .venv
+  - build
+  - dist
+  - .gptcontext-cache
+  - __pycache__
+  - .pytest_cache
+  - .mypy_cache
+  - .vscode
+  - .idea
+  # Exclude Splunk app bin/lib subdirs
+  - bin/lib
+  - bin/generated

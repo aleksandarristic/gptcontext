@@ -1,0 +1,22 @@
+# Terraform / Infrastructure-as-Code (IaC) project
+
+MAX_TOTAL_TOKENS: 15000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .tf
+  - .tfvars
+  - .tfstate
+  - .json
+  - .yaml
+  - .yml
+  - .md
+  - .sh
+  - .txt
+
+EXCLUDE_DIRS:
+  - .git
+  - .terraform
+  - .gptcontext-cache
+  - .idea
+  - .vscode

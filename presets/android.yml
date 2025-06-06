@@ -1,0 +1,23 @@
+# Android project (Java + Kotlin + Gradle)
+
+MAX_TOTAL_TOKENS: 15000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .java
+  - .kt
+  - .xml
+  - .gradle
+  - .md
+  - .json
+  - .yml
+  - .yaml
+  - .txt
+
+EXCLUDE_DIRS:
+  - .git
+  - .idea
+  - .vscode
+  - build
+  - .gradle
+  - .gptcontext-cache

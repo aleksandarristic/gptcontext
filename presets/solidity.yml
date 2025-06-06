@@ -1,0 +1,25 @@
+# Blockchain / Solidity project (smart contracts)
+
+MAX_TOTAL_TOKENS: 15000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .sol
+  - .js
+  - .ts
+  - .json
+  - .yaml
+  - .yml
+  - .md
+  - .txt
+  - .env
+
+EXCLUDE_DIRS:
+  - .git
+  - node_modules
+  - build
+  - artifacts
+  - cache
+  - .idea
+  - .vscode
+  - .gptcontext-cache

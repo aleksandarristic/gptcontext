@@ -1,0 +1,25 @@
+# LaTeX / scientific writing project
+
+MAX_TOTAL_TOKENS: 15000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .tex
+  - .bib
+  - .cls
+  - .sty
+  - .md
+  - .yaml
+  - .yml
+  - .json
+  - .txt
+  - .pdf
+
+EXCLUDE_DIRS:
+  - .git
+  - build
+  - out
+  - _minted-*
+  - .idea
+  - .vscode
+  - .gptcontext-cache

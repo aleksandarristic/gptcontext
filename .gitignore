@@ -7,3 +7,5 @@ __pycache__
 .gptcontext.txt
 .gptcontext_message.txt
 .gptcontext-config.yml
+.vscode
+.pytest_cache

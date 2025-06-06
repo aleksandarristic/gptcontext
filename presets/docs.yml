@@ -1,0 +1,25 @@
+# Docs / static site / knowledge base
+
+MAX_TOTAL_TOKENS: 20000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .md
+  - .markdown
+  - .html
+  - .yaml
+  - .yml
+  - .json
+  - .txt
+  - .rst
+
+EXCLUDE_DIRS:
+  - .git
+  - node_modules
+  - .idea
+  - .vscode
+  - .gptcontext-cache
+  - dist
+  - build
+  - public
+  - static

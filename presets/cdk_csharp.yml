@@ -1,0 +1,25 @@
+# AWS CDK — C# (.NET) project
+
+MAX_TOTAL_TOKENS: 15000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .cs
+  - .csproj
+  - .json
+  - .yaml
+  - .yml
+  - .md
+  - .txt
+  - .sh
+
+EXCLUDE_DIRS:
+  - .git
+  - bin
+  - obj
+  - cdk.out
+  - dist
+  - build
+  - .idea
+  - .vscode
+  - .gptcontext-cache

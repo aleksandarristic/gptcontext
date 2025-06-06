@@ -1,0 +1,25 @@
+# AWS CDK — TypeScript project
+
+MAX_TOTAL_TOKENS: 15000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .ts
+  - .tsx
+  - .json
+  - .yaml
+  - .yml
+  - .md
+  - .txt
+  - .js
+  - .sh
+
+EXCLUDE_DIRS:
+  - .git
+  - node_modules
+  - cdk.out
+  - dist
+  - build
+  - .idea
+  - .vscode
+  - .gptcontext-cache

@@ -1,0 +1,49 @@
+# Optimized for code review — only review source and config, no assets, no large data
+
+MAX_TOTAL_TOKENS: 12000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .py
+  - .js
+  - .ts
+  - .java
+  - .go
+  - .cpp
+  - .c
+  - .h
+  - .kt
+  - .cs
+  - .php
+  - .rb
+  - .sh
+  - .yaml
+  - .yml
+  - .json
+  - .toml
+  - .xml
+  - .cfg
+  - .ini
+  - .md
+  - .txt
+
+EXCLUDE_DIRS:
+  - .git
+  - node_modules
+  - vendor
+  - dist
+  - build
+  - bin
+  - obj
+  - target
+  - data
+  - datasets
+  - images
+  - public
+  - static
+  - tmp
+  - logs
+  - .venv
+  - .idea
+  - .vscode
+  - .gptcontext-cache

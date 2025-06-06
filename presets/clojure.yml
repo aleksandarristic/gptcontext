@@ -1,0 +1,23 @@
+# Clojure project (Leiningen / deps.edn / Babashka)
+
+MAX_TOTAL_TOKENS: 12000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .clj
+  - .cljs
+  - .cljc
+  - .edn
+  - .md
+  - .yaml
+  - .yml
+  - .json
+  - .txt
+
+EXCLUDE_DIRS:
+  - .git
+  - target
+  - out
+  - .idea
+  - .vscode
+  - .gptcontext-cache

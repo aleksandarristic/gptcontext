@@ -1,0 +1,27 @@
+# Pure Python project
+MAX_TOTAL_TOKENS: 12000
+MAX_FILE_TOKENS: 5000
+
+INCLUDE_EXTS:
+  - .py
+  - .toml
+  - .yaml
+  - .yml
+  - .json
+  - .md
+  - .txt
+  - .ini
+  - .cfg
+  - .sh
+
+EXCLUDE_DIRS:
+  - .git
+  - __pycache__
+  - .venv
+  - dist
+  - build
+  - .pytest_cache
+  - .mypy_cache
+  - .vscode
+  - .idea
+  - .gptcontext-cache

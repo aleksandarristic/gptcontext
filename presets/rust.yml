@@ -1,0 +1,20 @@
+# Rust project (Cargo)
+
+MAX_TOTAL_TOKENS: 10000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .rs
+  - .toml
+  - .md
+  - .yaml
+  - .yml
+  - .json
+  - .txt
+
+EXCLUDE_DIRS:
+  - .git
+  - target
+  - .idea
+  - .vscode
+  - .gptcontext-cache

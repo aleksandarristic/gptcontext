@@ -1,0 +1,28 @@
+# Data pipeline / ETL project
+
+MAX_TOTAL_TOKENS: 15000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .py
+  - .sql
+  - .json
+  - .yaml
+  - .yml
+  - .csv
+  - .parquet
+  - .ipynb
+  - .md
+  - .txt
+  - .sh
+
+EXCLUDE_DIRS:
+  - .git
+  - data
+  - tmp
+  - logs
+  - output
+  - .venv
+  - .idea
+  - .vscode
+  - .gptcontext-cache

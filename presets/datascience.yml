@@ -1,0 +1,33 @@
+# Python Data Science / ML / Notebook project
+
+MAX_TOTAL_TOKENS: 15000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .py
+  - .ipynb
+  - .md
+  - .toml
+  - .yaml
+  - .yml
+  - .json
+  - .csv
+  - .txt
+  - .ini
+  - .cfg
+  - .Rmd
+  - .R
+
+EXCLUDE_DIRS:
+  - .git
+  - .venv
+  - dist
+  - build
+  - .mypy_cache
+  - .pytest_cache
+  - .vscode
+  - .idea
+  - .gptcontext-cache
+  - .ipynb_checkpoints
+  - output
+  - data

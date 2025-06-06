@@ -174,6 +174,77 @@ python build_context.py --base . --max-tokens 12000 --file-token-threshold 3000 
 
 ---
 
+## Using Config Presets
+
+GPTContext supports loading custom config presets via the `--config-file` option.
+
+Presets allow you to quickly tailor GPTContext behavior for different types of projects — for example:
+
+- Frontend-only extraction
+- Backend code review
+- Infrastructure audit
+- Monorepos
+- Language-specific tuning (Python, Java, CDK, etc.)
+- Security audit of configs/secrets
+
+Presets are provided as YAML files in the `presets/` folder.
+
+### How to use a preset
+
+```bash
+gptcontext --config-file presets/<preset-name>.yml
+```
+
+For example:
+
+```bash
+gptcontext --config-file presets/backend_only.yml
+```
+
+### Available Presets
+
+| Preset filename          | Description                                    | Example command                                          |
+|--------------------------|------------------------------------------------|---------------------------------------------------------|
+| `default.yml`            | Default config — matches GPTContext default    | `gptcontext --config-file presets/default.yml`           |
+| `minimal.yml`            | Minimal safe defaults                         | `gptcontext --config-file presets/minimal.yml`           |
+| `allcode.yml`            | Maximum code coverage (all source files)      | `gptcontext --config-file presets/allcode.yml`           |
+| `review_only.yml`        | Optimized for code review                     | `gptcontext --config-file presets/review_only.yml`       |
+| `audit.yml`              | Optimized for security audit (configs, secrets)| `gptcontext --config-file presets/audit.yml`             |
+| `frontend_only.yml`      | Frontend app (React, Vue, JS focused)         | `gptcontext --config-file presets/frontend_only.yml`     |
+| `backend_only.yml`       | Backend app (API / server focused)            | `gptcontext --config-file presets/backend_only.yml`      |
+| `design_docs.yml`        | Design docs / architecture-only               | `gptcontext --config-file presets/design_docs.yml`       |
+| `tests_only.yml`         | Tests-only (test files and configs)           | `gptcontext --config-file presets/tests_only.yml`        |
+| `infra_only.yml`         | Infrastructure-only (Terraform, K8s, Ansible) | `gptcontext --config-file presets/infra_only.yml`        |
+| `python.yml`             | Pure Python repo                              | `gptcontext --config-file presets/python.yml`            |
+| `splunkapp.yml`          | Splunk app (TA or App builder)                | `gptcontext --config-file presets/splunkapp.yml`         |
+| `python_webapp.yml`      | Python webapp (HTML, Jinja, JS, Markdown)     | `gptcontext --config-file presets/python_webapp.yml`     |
+| `flutter.yml`            | Flutter / Dart project                        | `gptcontext --config-file presets/flutter.yml`           |
+| `android.yml`            | Android project (Java/Kotlin/XML)             | `gptcontext --config-file presets/android.yml`           |
+| `unity.yml`              | Unity game project (C#)                       | `gptcontext --config-file presets/unity.yml`             |
+| `dotnet.yml`             | .NET Core / C# project                        | `gptcontext --config-file presets/dotnet.yml`            |
+| `monorepo.yml`           | Monorepo (multi-language)                     | `gptcontext --config-file presets/monorepo.yml`          |
+| `docs.yml`               | Docs-only / static site / knowledge base      | `gptcontext --config-file presets/docs.yml`              |
+| `laravel.yml`            | PHP / Laravel project                         | `gptcontext --config-file presets/laravel.yml`           |
+| `rails.yml`              | Ruby on Rails project                         | `gptcontext --config-file presets/rails.yml`             |
+| `phoenix.yml`            | Elixir / Phoenix project                      | `gptcontext --config-file presets/phoenix.yml`           |
+| `clojure.yml`            | Clojure project                               | `gptcontext --config-file presets/clojure.yml`           |
+| `haskell.yml`            | Haskell project (Stack / Cabal)               | `gptcontext --config-file presets/haskell.yml`           |
+| `latex.yml`              | LaTeX / scientific writing project            | `gptcontext --config-file presets/latex.yml`             |
+| `hdl.yml`                | FPGA / Hardware Design repo                   | `gptcontext --config-file presets/hdl.yml`               |
+| `solidity.yml`           | Blockchain / Solidity project                 | `gptcontext --config-file presets/solidity.yml`          |
+| `unreal.yml`             | Unreal Engine project                         | `gptcontext --config-file presets/unreal.yml`            |
+| `bashops.yml`            | Bash / Shell scripts / DevOps repo            | `gptcontext --config-file presets/bashops.yml`           |
+| `github_actions.yml`     | GitHub Actions / CI/CD config repo            | `gptcontext --config-file presets/github_actions.yml`    |
+| `reactnative.yml`        | Cross-platform mobile app (React Native/Ionic)| `gptcontext --config-file presets/reactnative.yml`       |
+| `datapipeline.yml`       | Data pipeline / ETL project                   | `gptcontext --config-file presets/datapipeline.yml`      |
+| `kong.yml`               | API Gateway / Kong / NGINX config repo        | `gptcontext --config-file presets/kong.yml`              |
+| `cdk_ts.yml`             | AWS CDK — TypeScript project                  | `gptcontext --config-file presets/cdk_ts.yml`            |
+| `cdk_py.yml`             | AWS CDK — Python project                      | `gptcontext --config-file presets/cdk_py.yml`            |
+| `cdk_java.yml`           | AWS CDK — Java project                        | `gptcontext --config-file presets/cdk_java.yml`          |
+| `cdk_csharp.yml`         | AWS CDK — C# (.NET) project                   | `gptcontext --config-file presets/cdk_csharp.yml`        |
+
+---
+
 ### Generating a Message Template
 
 Once you have a context file, you may want to inject it into a chat prompt. If you provide a `message_sample.txt` (the default shipped template), you can ask the CLI to fill it in:

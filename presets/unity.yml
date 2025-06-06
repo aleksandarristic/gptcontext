@@ -1,0 +1,26 @@
+# Unity game project (C# + Unity YAML + configs)
+
+MAX_TOTAL_TOKENS: 15000
+MAX_FILE_TOKENS: 4000
+
+INCLUDE_EXTS:
+  - .cs
+  - .shader
+  - .cginc
+  - .yaml
+  - .yml
+  - .meta
+  - .md
+  - .txt
+
+EXCLUDE_DIRS:
+  - .git
+  - Library
+  - Temp
+  - Obj
+  - Build
+  - Builds
+  - Logs
+  - .idea
+  - .vscode
+  - .gptcontext-cache

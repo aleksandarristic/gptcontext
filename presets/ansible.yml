@@ -1,0 +1,22 @@
+# Ansible playbook / role repo
+
+MAX_TOTAL_TOKENS: 12000
+MAX_FILE_TOKENS: 3000
+
+INCLUDE_EXTS:
+  - .yaml
+  - .yml
+  - .j2
+  - .json
+  - .md
+  - .txt
+  - .sh
+
+EXCLUDE_DIRS:
+  - .git
+  - .gptcontext-cache
+  - .idea
+  - .vscode
+  - tmp
+  - artifacts
+  - .ansible
