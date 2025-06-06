@@ -55,8 +55,21 @@ def main() -> None:
         help="Path to a custom .gptcontext-config.yml (overrides default).",
     )
     parser.add_argument(
-        "--base", default=config.BASE_DIR, help="Base directory to scan"
+        "--base", "-b", default=config.BASE_DIR, help="Base directory to scan"
     )
+    parser.add_argument(
+        "--scan-dir",
+        "-s",
+        type=str,
+        help="Directory (relative to --base) to actually scan. If omitted, uses --base.",
+    )
+    parser.add_argument(
+        "--output-dir",
+        "-o",
+        type=str,
+        help="Root directory under which to write .gptcontext files. Default = $HOME/.gptcontext/",
+    )
+
     parser.add_argument("--max-tokens", type=int, default=config.MAX_TOTAL_TOKENS)
     parser.add_argument(
         "--file-token-threshold",
@@ -86,6 +99,28 @@ def main() -> None:
         help="Continue processing even if some summaries fail (not recommended for quota errors)",
     )
     args = parser.parse_args()
+    base_path = Path(args.base).resolve()
+    if args.config_file:
+        config.init_config(base_path, Path(args.config_file))
+    else:
+        config.init_config(base_path)
+
+    # Determine the “scan” root. If --scan-dir is provided, interpret relative to base_path.
+    if args.scan_dir:
+        scan_root = (base_path / args.scan_dir).resolve()
+        if not scan_root.exists() or not scan_root.is_dir():
+            logger.error(f"ERROR: scan directory {scan_root} does not exist or is not a directory")
+            sys.exit(1)
+    else:
+        scan_root = base_path
+
+    home = Path.home()
+    default_out = home / ".gptcontext"
+    out_root = Path(args.output_dir).expanduser().resolve() if args.output_dir else default_out
+    # The subfolder name is the final component of scan_root
+    subfolder = scan_root.name
+    output_base = out_root / subfolder
+    output_base.mkdir(parents=True, exist_ok=True)
 
     logging.basicConfig(
         level=logging.DEBUG if args.verbose else logging.INFO,
@@ -126,7 +161,7 @@ def main() -> None:
 
     # 2) Scan files
     scanner = FileScanner(
-        base_path=base_path,
+        base_path=scan_root,
         include_exts=cfg.INCLUDE_EXTS,
         exclude_dirs=cfg.EXCLUDE_DIRS,
         exclude_files=cfg.EXCLUDE_FILES,
@@ -136,13 +171,10 @@ def main() -> None:
     files = scanner.list_files()
 
     # 3) Create cache directory if summarization is on
-    cache_dir = base_path / cfg.GPTCONTEXT_CACHE_DIRNAME
+    cache_dir = output_base / cfg.GPTCONTEXT_CACHE_DIRNAME
     if args.summarize:
-        if not cache_dir.exists():
-            cache_dir.mkdir()
-            logger.info(f'✓ Created cache directory "{cache_dir.name}"')
-        else:
-            cache_dir.mkdir(exist_ok=True)
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        logger.info(f'✓ Using cache directory "{cache_dir}"')
 
     # 4) Build context
     builder = ContextBuilder(
@@ -188,16 +220,18 @@ def main() -> None:
 
     # 6) Write context file
     context_filename = args.output or cfg.CONTEXT_OUTPUT_FILENAME
+    context_path = output_base / context_filename
     try:
-        (base_path / context_filename).write_text(context_str, encoding="utf-8")
-        logger.info(f'✓ Wrote context file to "{context_filename}"')
+        context_path.write_text(context_str, encoding="utf-8")
+        logger.info(f'✓ Wrote context file to "{context_path}"')
     except Exception as e:
-        logger.error(f"Failed to write context file {context_filename}: {e}")
+        logger.error(f"Failed to write context file {context_path}: {e}")
         sys.exit(1)
 
     # 7) Optionally write message template
     if args.generate_message:
-        write_message_template(context_str, base_path / cfg.MESSAGE_OUTPUT_FILENAME)
+        message_file = output_base / cfg.MESSAGE_OUTPUT_FILENAME
+        write_message_template(context_str, message_file)
 
     # 8) Exit with appropriate code
     if failed_count > 0:
