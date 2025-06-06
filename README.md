@@ -42,7 +42,7 @@
 1. Clone the repository (or add it as a dependency in your project):
 
    ```bash
-   git clone https://github.com/your-org/gptcontext.git
+   git clone https://github.com/aleksandarristic/gptcontext.git
    cd gptcontext
    ```
 
@@ -74,13 +74,15 @@ All default settings (token limits, included extensions, excluded directories, e
 ```yaml
 MAX_TOTAL_TOKENS: 8000
 MAX_FILE_TOKENS: 3000
-INCLUDE_EXTS:
+
+include_exts:
   - .py
   - .md
-EXCLUDE_DIRS:
-  - node_modules
-  - dist
-  - .venv
+
+exclude:
+  - node_modules/
+  - dist/
+  - .venv/
 ```
 
 When you run the CLI, if no explicit `--config-file` is provided, it will automatically look for `.gptcontext-config.yml` in your working directory.
@@ -139,15 +141,16 @@ If you want to override any of the default settings on a per-project basis, crea
 # .gptcontext-config.yml
 MAX_TOTAL_TOKENS: 8000
 MAX_FILE_TOKENS: 2500
-INCLUDE_EXTS:
+
+include_exts:
   - .py
   - .md
   - .json
-EXCLUDE_DIRS:
-  - node_modules
-  - dist
-  - .venv
-EXCLUDE_FILES:
+
+exclude:
+  - node_modules/
+  - dist/
+  - .venv/
   - SECRET_CONFIG.yaml
 ```
 
