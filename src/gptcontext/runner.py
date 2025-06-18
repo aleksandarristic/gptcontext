@@ -37,12 +37,13 @@ def run(args, cfg, base_path: Path):
         logger.error(f"ERROR: scan directory {scan_root} does not exist or is not a directory")
         sys.exit(1)
 
-    out_root = (
-        Path(args.output_dir).expanduser().resolve()
-        if args.output_dir
-        else Path.home() / ".gptcontext"
-    )
-    output_base = out_root / scan_root.name
+    if args.output_dir:
+        out_root = Path(args.output_dir).expanduser().resolve()
+        output_base = out_root
+    else:
+        out_root = Path.home() / ".gptcontext"
+        output_base = out_root / scan_root.name
+
     output_base.mkdir(parents=True, exist_ok=True)
 
     if args.summarize:
