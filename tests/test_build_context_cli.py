@@ -37,6 +37,6 @@ def test_build_context_cli_runs(tmp_path):
 
     assert result.returncode in {0, 2}, result.stderr
 
-    outdir = tmp_path / tmp_path.name  # matches CLI logic
-    assert (outdir / ".gptcontext.txt").exists()
-    assert (outdir / ".gptcontext_message.txt").exists()
+    # Updated output assertions
+    assert (tmp_path / ".gptcontext.txt").exists()
+    assert (tmp_path / ".gptcontext_message.txt").exists()
