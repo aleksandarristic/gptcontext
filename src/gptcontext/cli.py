@@ -26,7 +26,7 @@ def parse_args() -> argparse.Namespace:
         "--output-dir", "-o", type=str, help="Root directory for .gptcontext output"
     )
 
-    parser.add_argument("--max-tokens", type=int, default=config.MAX_TOTAL_TOKENS)
+    parser.add_argument("--max-tokens", type=int, default=None, help="Maximum total tokens in context")
     parser.add_argument(
         "--file-token-threshold", type=int, help="Threshold to summarize large files"
     )
@@ -83,6 +83,8 @@ def main():
 
     config.init_config(base_path, config_path) if config_path else config.init_config(base_path)
     cfg = config.get_config()
+    if args.max_tokens is None:
+        args.max_tokens = cfg.get("MAX_TOTAL_TOKENS", -1)
 
     run(args, cfg, base_path)
 

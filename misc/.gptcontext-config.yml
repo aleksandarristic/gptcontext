@@ -1,79 +1,69 @@
 # Sample .gptcontext-config.yml
 # Place this file in your project root to override default configuration values
 
-# Maximum total number of tokens allowed in the final context output
-MAX_TOTAL_TOKENS: 15000
+# .gptcontext-config.yml
 
-# Per-file token threshold; if a file exceeds this, it will be summarized (if --summarize is enabled)
-MAX_FILE_TOKENS: 3000
+# Maximum total tokens allowed in the generated context
+MAX_TOTAL_TOKENS: 10000
 
-# Maximum file size (in megabytes); files larger than this are skipped entirely
+# Per-file token threshold before summarization is triggered
+MAX_FILE_TOKENS: 4000
+
+# Maximum file size (in MB) to process
 MAX_FILE_SIZE_MB: 2
 
-# OpenAI model used for summarization (when --summarize is enabled)
-OPENAI_MODEL: "gpt-4"
-
-# Output filename for the generated context content
-CONTEXT_OUTPUT_FILENAME: ".project-context.txt"
-
-# Output filename for the optional message template
-MESSAGE_OUTPUT_FILENAME: ".project-context-message.txt"
-
-# Cache directory name for summaries, relative to the project root
-GPTCONTEXT_CACHE_DIRNAME: ".context-cache"
-
-# Summarizer type to use; options are 'simple' or 'openai'
-SUMMARIZER: simple
-
-# File extensions to include in context generation
-# Note: Use a list in YAML, it will be converted to a set internally
-exclude:
-- .git/
-- .svn/
-- node_modules/
-- __pycache__/
-- dist/
-- build/
-- .venv/
-- venv/
-- env/
-- .mypy_cache/
-- .pytest_cache/
-- .vscode/
-- .idea/
-- .context-cache/
-- target/
-- bin/
-- obj/
-- ".project-context.txt"
-- ".project-context-message.txt"
-- "README.md"
-- "CHANGELOG.md"
-- "LICENSE"
-- "package-lock.json"
-- "yarn.lock"
-- "Cargo.lock"
-
+# File extensions to include (edit as needed)
 include_exts:
-- ".py"
-- ".js"
-- ".ts"
-- ".jsx"
-- ".tsx"
-- ".md"
-- ".json"
-- ".yaml"
-- ".yml"
-- ".toml"
-- ".html"
-- ".css"
-- ".scss"
-- ".go"
-- ".rs"
-- ".java"
-- ".cpp"
-- ".c"
-- ".h"
+  - .py
+  - .md
+  - .json
+  - .yaml
+  - .yml
+  - .js
+  - .ts
+  - .html
+  - .css
+  - .toml
+  - .sh
 
-# Directory names to exclude from scanning
+# Exclusion patterns (supports globs and directories)
+exclude:
+  # Directory patterns
+  - .git/
+  - node_modules/
+  - .venv/
+  - dist/
+  - build/
+  - .mypy_cache/
+  - .pytest_cache/
+  - __pycache__/
+  - .gptcontext-cache/
+  - .idea/
+  - .vscode/
+  - env/
+  # Glob patterns
+  - "*.log"
+  - "*.tmp"
+  - "*.bak"
+  - "*.test.*"
+  - "**/__pycache__/"
+  - "**/.mypy_cache/"
+  - "test_*"
+  # Specific files
+  - ".gptcontext.txt"
+  - ".gptcontext_message.txt"
+  - "README.md"
+  - "CHANGELOG.md"
+  - "LICENSE"
+
+# Use the built-in default excludes in addition to your list
 use_default_excludes: true
+
+# Summarizer selection ("simple" = local, "chatgpt" = OpenAI)
+SUMMARIZER: "simple"
+
+# OpenAI model (only needed if SUMMARIZER is "chatgpt")
+OPENAI_MODEL: "gpt-3.5-turbo"
+
+# Message template file (relative to project root)
+message_template_file: "src/gptcontext/message_sample.txt"
