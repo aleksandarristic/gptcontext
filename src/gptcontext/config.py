@@ -192,7 +192,7 @@ class ConfigManager:
         """Allow attribute-style access to config values."""
         if name.startswith("_"):
             raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-        return self._config.get(name, getattr(_DEFAULT_CONFIG, name, None))
+        return self._config.get(name, _DEFAULT_CONFIG.get(name))
 
 
 # Global config manager instance

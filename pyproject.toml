@@ -13,10 +13,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "ruamel.yaml"]
+dev = ["pytest", "ruamel.yaml", "ruff"]
 
 [project.scripts]
-gptcontext = "gptcontext.build_context:main"
+gptcontext = "gptcontext.cli:main"
 
 [tool.ruff]
 src = ["src"]
