@@ -1,0 +1,33 @@
+[project]
+name = "gptcontext"
+version = "0.1.0"
+description = "CLI tool to generate GPT-friendly codebase summaries"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "openai>=1.14.0",
+    "tiktoken>=0.5.1",
+    "pathspec>=0.12.1",
+    "PyYAML>=6.0"
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruamel.yaml"]
+
+[project.scripts]
+gptcontext = "gptcontext.build_context:main"
+
+[tool.ruff]
+src = ["src"]
+line-length = 100
+target-version = "py313"  # or your actual version
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+addopts = "-ra -q"
+testpaths = ["tests"]
+
+[tool.mypy]
+mypy_path = "src"
+strict = true

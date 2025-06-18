@@ -5,8 +5,8 @@ from typing import List, Optional, Tuple
 
 import tiktoken
 
-import config
-from summarizer import (
+import gptcontext.config as config
+from gptcontext.summarizer import (
     APIKeyError,
     QuotaExceededError,
     SummarizationError,

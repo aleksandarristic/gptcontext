@@ -1,9 +1,9 @@
 import pytest
 
-import config
-from file_scanner import FileScanner
-from gitignore_manager import GitignoreManager
-
+import gptcontext.config as config
+from gptcontext.file_scanner import FileScanner
+from gptcontext.gitignore_manager import GitignoreManager
+from gptcontext.exclude_matcher import ExcludeMatcher  # ✅ required
 
 @pytest.fixture
 def setup_config(tmp_path, monkeypatch):
@@ -11,7 +11,6 @@ def setup_config(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     config.init_config(tmp_path)
     return tmp_path
-
 
 @pytest.fixture
 def create_repo(setup_config):
@@ -29,20 +28,20 @@ def create_repo(setup_config):
     (base / "ignored.md").write_text("# ignore")
     return base
 
-
 def test_list_files_filters(create_repo):
     base = create_repo
     # Load .gitignore spec
     gim = GitignoreManager(base)
     spec = gim.load_spec()
 
+    exclude_matcher = ExcludeMatcher(patterns=["node_modules/"])  # ✅ fixed
+
     # Instantiate FileScanner with both repo_root and scan_root set to base
     scanner = FileScanner(
         repo_root=base,
         scan_root=base,
         include_exts={".py", ".md"},
-        exclude_dirs={"node_modules"},
-        exclude_files=set(),
+        exclude_matcher=exclude_matcher,  # ✅ required param
         skip_files=set(),
         gitignore_spec=spec,
     )

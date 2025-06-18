@@ -8,7 +8,7 @@ from typing import Tuple
 import openai
 import tiktoken
 
-from config import ENCODING_NAME
+from gptcontext.config import ENCODING_NAME
 
 enc = tiktoken.get_encoding(ENCODING_NAME)
 logger = getLogger(__name__)

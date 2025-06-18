@@ -1,0 +1,13 @@
+# summarize current directory into a context.txt file
+# Basic usage (writes context.txt in current dir)
+# gptcontext
+# 
+# Summarize large files via OpenAI
+# gptcontext --summarize
+# 
+# Limit token usage and customize output file
+# gptcontext --max-tokens 8000 --output myrepo_context.txt
+
+GPTCONTEXT_DIR="/path-to/gptcontext"
+GPTCONTEXT_VENV="$GPTCONTEXT_DIR/.venv/bin/python"
+alias gptcontext="PYTHONPATH=$GPTCONTEXT_DIR/src $GPTCONTEXT_VENV -m gptcontext.build_context"

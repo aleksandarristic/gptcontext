@@ -6,9 +6,9 @@ from typing import List, Optional, Set
 
 import pathspec
 
-from exclude_matcher import ExcludeMatcher
+from gptcontext.exclude_matcher import ExcludeMatcher
 
-import config
+import gptcontext.config as config
 
 
 class FileScanner:

@@ -1,6 +1,6 @@
 import pytest
 
-from summarizer import get_cached_summary
+from gptcontext.summarizer import get_cached_summary
 
 
 class DummyResponse:

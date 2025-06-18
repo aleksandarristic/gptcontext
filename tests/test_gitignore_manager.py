@@ -1,6 +1,6 @@
 import pytest
 
-from gitignore_manager import GitignoreManager
+from gptcontext.gitignore_manager import GitignoreManager
 
 
 @pytest.fixture

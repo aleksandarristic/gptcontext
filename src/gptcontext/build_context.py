@@ -8,12 +8,12 @@ import logging
 import sys
 from pathlib import Path
 
-import config
-from context_builder import ContextBuilder
-from file_scanner import FileScanner
-from gitignore_manager import GitignoreManager
-from summarizer import APIKeyError, QuotaExceededError
-from exclude_matcher import ExcludeMatcher
+import gptcontext.config as config
+from gptcontext.context_builder import ContextBuilder
+from gptcontext.file_scanner import FileScanner
+from gptcontext.gitignore_manager import GitignoreManager
+from gptcontext.summarizer import APIKeyError, QuotaExceededError
+from gptcontext.exclude_matcher import ExcludeMatcher
 
 # Silence OpenAI + HTTPX/HTTPCore noise even when --verbose is passed:
 logging.getLogger("openai").setLevel(logging.WARNING)
