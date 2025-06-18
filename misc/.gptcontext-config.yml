@@ -22,6 +22,9 @@ MESSAGE_OUTPUT_FILENAME: ".project-context-message.txt"
 # Cache directory name for summaries, relative to the project root
 GPTCONTEXT_CACHE_DIRNAME: ".context-cache"
 
+# Summarizer type to use; options are 'simple' or 'openai'
+SUMMARIZER: simple
+
 # File extensions to include in context generation
 # Note: Use a list in YAML, it will be converted to a set internally
 exclude:
