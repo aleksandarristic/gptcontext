@@ -21,7 +21,12 @@ gptcontext = "gptcontext.build_context:main"
 [tool.ruff]
 src = ["src"]
 line-length = 100
-target-version = "py313"  # or your actual version
+target-version = "py313" 
+
+[tool.ruff.lint]
+select = ["E", "F"]
+ignore = ["E501"]
+
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

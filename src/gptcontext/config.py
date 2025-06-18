@@ -26,20 +26,56 @@ _DEFAULT_CONFIG = {
     "MESSAGE_OUTPUT_FILENAME": ".gptcontext_message.txt",
     # Cache directory name for summaries, relative to the project root
     "GPTCONTEXT_CACHE_DIRNAME": ".gptcontext-cache",
+    # Default summarizer to use; can be "simple" for local summarization or "chatgpt" for OpenAI
+    "SUMMARIZER": "simple",  # or "chatgpt" for OpenAI summarization
     # OpenAI model used for summarization (when --summarize is enabled)
     "OPENAI_MODEL": "gpt-3.5-turbo",
     # Token encoder name used by tiktoken to measure token usage
     "ENCODING_NAME": "cl100k_base",
+    # Path to the message template file used for generating prompts
+    "message_template_file": str(SCRIPT_DIR / "message_sample.txt"),
     # File extensions to include in context generation
     "include_exts": {
-        ".py", ".md", ".js", ".ts", ".jsx", ".tsx", ".json", ".toml", ".yaml", ".yml",
-        ".html", ".css", ".scss", ".sass", ".less", ".java", ".go", ".rs", ".cpp", ".c",
-        ".h", ".hpp", ".cs", ".swift", ".kt", ".m", ".sh", ".bash", ".zsh", ".ps1", ".pl",
-        ".rb", ".php", ".ini", ".cfg", ".env", ".txt", ".xml"
+        ".py",
+        ".md",
+        ".js",
+        ".ts",
+        ".jsx",
+        ".tsx",
+        ".json",
+        ".toml",
+        ".yaml",
+        ".yml",
+        ".html",
+        ".css",
+        ".scss",
+        ".sass",
+        ".less",
+        ".java",
+        ".go",
+        ".rs",
+        ".cpp",
+        ".c",
+        ".h",
+        ".hpp",
+        ".cs",
+        ".swift",
+        ".kt",
+        ".m",
+        ".sh",
+        ".bash",
+        ".zsh",
+        ".ps1",
+        ".pl",
+        ".rb",
+        ".php",
+        ".ini",
+        ".cfg",
+        ".env",
+        ".txt",
+        ".xml",
     },
-    
     "use_default_excludes": True,
-
     "exclude": [
         # Directories (with trailing slash)
         ".git/",
@@ -59,7 +95,6 @@ _DEFAULT_CONFIG = {
         "__snapshots__/",
         ".coverage/",
         ".cache/",
-
         # Files (no trailing slash)
         ".DS_Store",
         ".gptcontext.txt",
@@ -85,9 +120,7 @@ class ConfigManager:
     Manages configuration with support for local overrides via .gptcontext-config.yml
     """
 
-    def __init__(
-        self, base_path: Optional[Path] = None, config_file: Optional[Path] = None
-    ):
+    def __init__(self, base_path: Optional[Path] = None, config_file: Optional[Path] = None):
         """
         Args:
           base_path: directory to search for .gptcontext-config.yml (ignored if config_file is set)
@@ -120,9 +153,7 @@ class ConfigManager:
                     else:
                         self._config[key] = value
                 else:
-                    logger.warning(
-                        f"Unknown config key '{key}' in {LOCAL_CONFIG_FILENAME}"
-                    )
+                    logger.warning(f"Unknown config key '{key}' in {LOCAL_CONFIG_FILENAME}")
 
             logger.info(f"✓ Loaded local config from {LOCAL_CONFIG_FILENAME}")
 
@@ -146,9 +177,7 @@ class ConfigManager:
                     else:
                         self._config[key] = value
                 else:
-                    logger.warning(
-                        f"Unknown config key '{key}' in {config_path.name}"
-                    )
+                    logger.warning(f"Unknown config key '{key}' in {config_path.name}")
             logger.info(f"✓ Loaded explicit config from {config_path}")
         except yaml.YAMLError as e:
             logger.warning(f"Failed to parse {config_path}: {e}")
@@ -162,9 +191,7 @@ class ConfigManager:
     def __getattr__(self, name: str) -> Any:
         """Allow attribute-style access to config values."""
         if name.startswith("_"):
-            raise AttributeError(
-                f"'{self.__class__.__name__}' object has no attribute '{name}'"
-            )
+            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
         return self._config.get(name, getattr(_DEFAULT_CONFIG, name, None))
 
 
@@ -193,6 +220,7 @@ ENCODING_NAME = _DEFAULT_CONFIG["ENCODING_NAME"]
 INCLUDE_EXTS = _DEFAULT_CONFIG["include_exts"]
 EXCLUDE = _DEFAULT_CONFIG["exclude"]
 
+
 def _update_module_globals():
     """Update module-level globals with current config values."""
     if _config_manager is None:
@@ -216,9 +244,7 @@ def _update_module_globals():
 
 
 # Override init_config to also update globals
-def init_config(
-    base_path: Optional[Path] = None, config_file: Optional[Path] = None
-) -> None:
+def init_config(base_path: Optional[Path] = None, config_file: Optional[Path] = None) -> None:
     """
     Initialize the global config manager.
     If config_file is provided, load overrides from that file instead of searching for

@@ -6,11 +6,11 @@ from typing import List, Optional, Tuple
 import tiktoken
 
 import gptcontext.config as config
-from gptcontext.summarizer import (
+from gptcontext.summarizer.base import Summarizer
+from gptcontext.summarizer.exceptions import (
     APIKeyError,
     QuotaExceededError,
     SummarizationError,
-    get_cached_summary,
 )
 
 logger = logging.getLogger(__name__)
@@ -48,9 +48,8 @@ class ContextBuilder:
 
     def __init__(
         self,
-        cache_dir: Path,
+        summarizer: Summarizer,
         scan_root: Path,
-        model: str,
         max_file_tokens: int,
         max_total_tokens: int,
         summarize_large: bool,
@@ -63,9 +62,8 @@ class ContextBuilder:
             max_total_tokens: Total token budget for the concatenated context.
             summarize_large: If True, attempt to summarize any file whose token count exceeds max_file_tokens.
         """
-        self.cache_dir = cache_dir
+        self.summarizer = summarizer
         self.base_path = scan_root
-        self.model = model
         self.max_file_tokens = max_file_tokens
         self.max_total_tokens = max_total_tokens
         self.summarize_large = summarize_large
@@ -86,13 +84,12 @@ class ContextBuilder:
         Returns:
             (action, tokens_to_add, snippet, success_flag)
             action ∈ {"include_full", "include_summary", "skip_threshold", "skip_summary_token", "skip_total_token", "skip_summary_failed"}
-        """
+        """  # noqa: E501
         if tokens > self.max_file_tokens:
             if self.summarize_large:
                 try:
-                    summary, success = get_cached_summary(
-                        content, str(rel_path), self.model, self.cache_dir
-                    )
+                    summary, success = self.summarizer.get_cached_summary(content, str(rel_path))
+
                     s_tokens = _file_token_count(summary)
 
                     if not success:
@@ -111,9 +108,7 @@ class ContextBuilder:
 
                 except (QuotaExceededError, APIKeyError) as e:
                     logger.error(f"Summarization failed: {e}")
-                    logger.error(
-                        "Stopping context generation due to summarization error"
-                    )
+                    logger.error("Stopping context generation due to summarization error")
                     raise
                 except SummarizationError as e:
                     logger.warning(f"Could not summarize {rel_path}: {e}")

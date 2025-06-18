@@ -1,2 +1,3 @@
 pytest
 ruamel.yaml
+ruff

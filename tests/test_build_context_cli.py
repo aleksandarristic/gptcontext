@@ -1,10 +1,9 @@
 import os
-from pathlib import Path
 import subprocess
+from pathlib import Path
 
 
 def test_build_context_cli_runs(tmp_path):
-
     # Create dummy config
     config_path = tmp_path / ".gptcontext-config.yml"
     config_path.write_text("MAX_TOTAL_TOKENS: 5000\n")
@@ -24,11 +23,11 @@ def test_build_context_cli_runs(tmp_path):
         [
             "python",
             "-m",
-            "gptcontext.build_context",
+            "gptcontext",
             "--base", str(tmp_path),
             "--generate-message",
             "--config-file", config_path.name,
-            "--output-dir", str(tmp_path),  # ✅ this fixes your issue
+            "--output-dir", str(tmp_path),
         ],
         cwd=tmp_path,
         capture_output=True,

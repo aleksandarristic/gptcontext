@@ -1,19 +1,16 @@
-# file_scanner.py
-
 import os
 from pathlib import Path
 from typing import List, Optional, Set
 
 import pathspec
 
-from gptcontext.exclude_matcher import ExcludeMatcher
-
 import gptcontext.config as config
+from gptcontext.exclude_matcher import ExcludeMatcher
 
 
 class FileScanner:
     """
-    Scans a directory tree (the “scan root”), applying include/exclude rules 
+    Scans a directory tree (the “scan root”), applying include/exclude rules
     (including .gitignore and ExcludeMatcher), and returns a sorted list of relevant files.
     """
 
@@ -28,9 +25,9 @@ class FileScanner:
     ) -> None:
         """
         Args:
-            repo_root: The repository root (where .gitignore lives). Patterns in .gitignore 
+            repo_root: The repository root (where .gitignore lives). Patterns in .gitignore
                        are matched against paths relative to this directory.
-            scan_root: The directory to actually walk (relative to repo_root). All files under 
+            scan_root: The directory to actually walk (relative to repo_root). All files under
                        scan_root will be considered (subject to excludes).
             include_exts: File extensions to include (e.g., {".py", ".md"}).
             exclude_matcher: ExcludeMatcher instance to determine excluded files/dirs.
@@ -80,8 +77,7 @@ class FileScanner:
 
             # Filter subdirs (prune walk)
             dirs[:] = [
-                d for d in dirs
-                if not self.exclude_matcher.is_excluded(Path(root, d), is_dir=True)
+                d for d in dirs if not self.exclude_matcher.is_excluded(Path(root, d), is_dir=True)
             ]
 
             for fname in files:

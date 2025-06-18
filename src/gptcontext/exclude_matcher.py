@@ -1,7 +1,6 @@
-# exclude_matcher.py
-
 import fnmatch
 from pathlib import Path
+
 
 class ExcludeMatcher:
     """

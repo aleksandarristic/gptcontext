@@ -1,9 +1,10 @@
 import pytest
 
 import gptcontext.config as config
+from gptcontext.exclude_matcher import ExcludeMatcher  # ✅ required
 from gptcontext.file_scanner import FileScanner
 from gptcontext.gitignore_manager import GitignoreManager
-from gptcontext.exclude_matcher import ExcludeMatcher  # ✅ required
+
 
 @pytest.fixture
 def setup_config(tmp_path, monkeypatch):
