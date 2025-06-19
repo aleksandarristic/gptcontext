@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 """
-generate_presets_md.py
+generate_presets.py
 
-Scan src/gptcontext/presets/*.yml and produce a PRESETS.md file there,
-with a table of presets and, for each preset, a detailed section (with a TOC link).
+Scan ./presets/*.yml and produce a PRESETS.md file in the repo root,
+with a table of presets and, for each preset, a detailed section
+(and a link back to the table).  The "[View YAML]" links now correctly
+point to presets/<name>.yml.
 """
 
-import yaml
-from pathlib import Path
 import sys
+from pathlib import Path
+
+import yaml
+
 
 def load_preset(path: Path):
     """
@@ -21,22 +25,19 @@ def load_preset(path: Path):
       - exclude: list from data['exclude']      (or [])
     """
     data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    name = path.stem
-    short = data.get("short_description", data.get("description", "")).strip()
-    long_desc = data.get("long_description", data.get("description", "")).strip()
-    include_exts = data.get("include_exts") or []
-    exclude = data.get("exclude") or []
     return {
-        "name": name,
+        "name": path.stem,
         "filename": path.name,
-        "short": short,
-        "long": long_desc,
-        "include_exts": include_exts,
-        "exclude": exclude,
+        "short": data.get("short_description", data.get("description", "")).strip(),
+        "long": data.get("long_description", data.get("description", "")).strip(),
+        "include_exts": data.get("include_exts") or [],
+        "exclude": data.get("exclude") or [],
     }
 
+
 def main():
-    repo_root = Path(__file__).parent
+    # assume this script lives in the reporoot/scripts/ directory
+    repo_root = Path(__file__).parent.parent.resolve()
     presets_dir = repo_root / "presets"
     if not presets_dir.is_dir():
         print(f"Error: presets directory not found at {presets_dir}", file=sys.stderr)
@@ -46,7 +47,7 @@ def main():
 
     # collect all .yml presets
     files = sorted(presets_dir.glob("*.yml"))
-    presets = [ load_preset(p) for p in files ]
+    presets = [load_preset(p) for p in files]
 
     lines = []
 
@@ -54,7 +55,8 @@ def main():
     lines.append("# GPTContext Presets\n")
     lines.append(
         "This document describes each of the built-in configuration presets "
-        "you can pass via `--config-file presets/<name>.yml`.\n"
+        "you can pass via `--config-file presets/<name>.yml`.\n\n"
+        "All the presets are in the `presets/` directory.\n"
     )
 
     # Table of presets
@@ -68,8 +70,9 @@ def main():
     # Detailed sections
     for p in presets:
         lines.append(f"## {p['name']}\n")
-        # link to file
-        lines.append(f"[View YAML →](./{p['filename']})\n")
+        # correct relative link into presets/
+        link_path = Path("presets") / p["filename"]
+        lines.append(f"[View YAML →]({link_path.as_posix()})\n")
         # long description
         if p["long"]:
             lines.append(f"{p['long']}\n")
@@ -86,6 +89,7 @@ def main():
 
     out_path.write_text("\n".join(lines), encoding="utf-8")
     print(f"Wrote {out_path.relative_to(repo_root)}")
+
 
 if __name__ == "__main__":
     main()

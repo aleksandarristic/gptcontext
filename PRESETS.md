@@ -59,7 +59,7 @@ All the presets are in the `presets/` directory.
 
 ## allcode
 
-[View YAML →](./allcode.yml)
+[View YAML →](presets/allcode.yml)
 
 This preset is designed to capture a wide range of source code files across various programming languages and formats.
 It includes common extensions for languages like Python, JavaScript, TypeScript, Go, Java, Kotlin, Rust, C/C++, C#, Swift,
@@ -74,7 +74,7 @@ The preset also excludes common directories that typically contain build artifac
 
 ## android
 
-[View YAML →](./android.yml)
+[View YAML →](presets/android.yml)
 
 This preset is tailored for Android projects, focusing on Java and Kotlin source files, along with
 Gradle build scripts. It includes common file extensions used in Android development and excludes directories
@@ -89,7 +89,7 @@ source files while avoiding unnecessary clutter from dependencies and build outp
 
 ## ansible
 
-[View YAML →](./ansible.yml)
+[View YAML →](presets/ansible.yml)
 
 This preset is designed for Ansible playbooks and roles, focusing on YAML files and Jinja2 templates.
 It includes common file extensions used in Ansible development and excludes directories that typically
@@ -104,7 +104,7 @@ essential source files while avoiding unnecessary clutter from dependencies and 
 
 ## audit
 
-[View YAML →](./audit.yml)
+[View YAML →](presets/audit.yml)
 
 This preset is designed for security audits, focusing on configuration files, environment variables,
 keys, and secrets. It includes common file extensions used for configuration and environment files,
@@ -118,7 +118,7 @@ while excluding directories that typically contain build artifacts, dependencies
 
 ## backend_only
 
-[View YAML →](./backend_only.yml)
+[View YAML →](presets/backend_only.yml)
 
 This preset is designed for backend applications, focusing on server-side code and API implementations.
 It includes common file extensions used in backend development across various languages such as Python, Go,
@@ -132,7 +132,7 @@ Java, Kotlin, Rust, C/C++, C#, PHP, Ruby, and more.
 
 ## bashops
 
-[View YAML →](./bashops.yml)
+[View YAML →](presets/bashops.yml)
 
 This preset is designed for Bash and Shell scripts, focusing on DevOps-related files. 
 It includes common file extensions used in shell scripting and DevOps workflows, while 
@@ -149,7 +149,7 @@ IDE-specific configurations.
 
 ## cdk_csharp
 
-[View YAML →](./cdk_csharp.yml)
+[View YAML →](presets/cdk_csharp.yml)
 
 This preset is designed for AWS CDK projects using C# (.NET). It focuses on
 capturing the essential source files, configuration files, and scripts while excluding
@@ -163,7 +163,7 @@ directories that typically contain build artifacts, dependencies, or IDE-specifi
 
 ## cdk_java
 
-[View YAML →](./cdk_java.yml)
+[View YAML →](presets/cdk_java.yml)
 
 This preset is designed for AWS CDK projects using Java. It focuses on capturing the essential
 source files, configuration files, and scripts while excluding directories that typically contain
@@ -179,7 +179,7 @@ unnecessary clutter from temporary files and build outputs.
 
 ## cdk_py
 
-[View YAML →](./cdk_py.yml)
+[View YAML →](presets/cdk_py.yml)
 
 This preset is designed for AWS CDK projects using Python. It focuses on capturing the essential
 source files, configuration files, and scripts while excluding directories that typically contain
@@ -195,7 +195,7 @@ unnecessary clutter from temporary files and build outputs.
 
 ## cdk_ts
 
-[View YAML →](./cdk_ts.yml)
+[View YAML →](presets/cdk_ts.yml)
 
 This preset is designed for AWS CDK projects using TypeScript. It focuses on capturing the essential
 source files, configuration files, and scripts while excluding directories that typically contain
@@ -211,7 +211,7 @@ unnecessary clutter from temporary files and build outputs.
 
 ## clojure
 
-[View YAML →](./clojure.yml)
+[View YAML →](presets/clojure.yml)
 
 This preset is tailored for Clojure projects, focusing on source files and configuration files
 used in common Clojure build tools like Leiningen and deps.edn. It includes common file extensions
@@ -227,7 +227,7 @@ source files while avoiding unnecessary clutter from temporary files and build o
 
 ## cpp
 
-[View YAML →](./cpp.yml)
+[View YAML →](presets/cpp.yml)
 
 This preset is designed for C and C++ projects, focusing on source files, headers,
 and configuration files. It includes common file extensions used in C/C++ development
@@ -242,7 +242,7 @@ configurations.
 
 ## datapipeline
 
-[View YAML →](./datapipeline.yml)
+[View YAML →](presets/datapipeline.yml)
 
 This preset is designed for data pipeline or ETL projects, focusing on Python scripts, SQL files,
 configuration files, and data files. It includes common file extensions used in data processing
@@ -258,7 +258,7 @@ from dependencies and build outputs.
 
 ## datascience
 
-[View YAML →](./datascience.yml)
+[View YAML →](presets/datascience.yml)
 
 This preset is designed for Python-based data science, machine learning, and notebook projects.
 It focuses on capturing essential Python scripts, Jupyter notebooks, configuration files, and data files
@@ -273,7 +273,7 @@ configurations.
 
 ## default
 
-[View YAML →](./default.yml)
+[View YAML →](presets/default.yml)
 
 This preset is designed to capture a wide range of file types and configurations
 commonly found in software projects. It includes various programming languages, configuration files,
@@ -289,7 +289,7 @@ for understanding the project without unnecessary clutter from temporary files o
 
 ## design_docs
 
-[View YAML →](./design_docs.yml)
+[View YAML →](presets/design_docs.yml)
 
 This preset is tailored for design documents and textual content, focusing on formats commonly used for documentation
 and design specifications. It includes common file extensions used in documentation while excluding directories
@@ -304,7 +304,7 @@ textual content while avoiding unnecessary clutter from code repositories or tem
 
 ## docs
 
-[View YAML →](./docs.yml)
+[View YAML →](presets/docs.yml)
 
 This preset is designed for documentation, static sites, or knowledge bases. It focuses on
 capturing essential documentation files, configuration files, and scripts while excluding directories
@@ -320,7 +320,7 @@ while avoiding unnecessary clutter from temporary files and build outputs.
 
 ## dotnet
 
-[View YAML →](./dotnet.yml)
+[View YAML →](presets/dotnet.yml)
 
 This preset is designed for .NET Core projects, focusing on C# source files, 
 configuration files, and project files. It includes common file extensions used 
@@ -336,7 +336,7 @@ essential source files while avoiding unnecessary clutter from temporary files a
 
 ## flutter
 
-[View YAML →](./flutter.yml)
+[View YAML →](presets/flutter.yml)
 
 This preset is designed for Flutter projects, focusing on Dart source files, configuration files,
 and other relevant files. It includes common file extensions used in Flutter development and excludes directories
@@ -351,7 +351,7 @@ source files while avoiding unnecessary clutter from temporary files and build o
 
 ## frontend_only
 
-[View YAML →](./frontend_only.yml)
+[View YAML →](presets/frontend_only.yml)
 
 This preset is designed for frontend applications, focusing on JavaScript and TypeScript codebases.
 It includes common file extensions used in modern frontend development, such as React and Vue components,
@@ -365,7 +365,7 @@ and excludes directories that typically contain build artifacts, dependencies, o
 
 ## github_actions
 
-[View YAML →](./github_actions.yml)
+[View YAML →](presets/github_actions.yml)
 
 This preset is designed for GitHub Actions and CI/CD repositories, focusing on YAML files
 and configuration files. It includes common file extensions used in CI/CD workflows and excludes
@@ -379,7 +379,7 @@ directories that typically contain build artifacts, dependencies, or IDE-specifi
 
 ## golang
 
-[View YAML →](./golang.yml)
+[View YAML →](presets/golang.yml)
 
 This preset is designed for Go projects, focusing on Go source files, module files, and
 configuration files. It includes common file extensions used in Go development and excludes directories
@@ -394,7 +394,7 @@ source files while avoiding unnecessary clutter from temporary files and build o
 
 ## haskell
 
-[View YAML →](./haskell.yml)
+[View YAML →](presets/haskell.yml)
 
 This preset is tailored for Haskell projects, focusing on source files and configuration files
 used in common Haskell build tools like Stack and Cabal. It includes common file extensions
@@ -410,7 +410,7 @@ source files while avoiding unnecessary clutter from temporary files and build o
 
 ## hdl
 
-[View YAML →](./hdl.yml)
+[View YAML →](presets/hdl.yml)
 
 This preset is tailored for FPGA and HDL projects, focusing on source files and configuration files
 used in common HDL development. It includes common file extensions used in Verilog, VHDL, and SystemVerilog development
@@ -425,7 +425,7 @@ The preset is designed to capture the essential source files while avoiding unne
 
 ## helm
 
-[View YAML →](./helm.yml)
+[View YAML →](presets/helm.yml)
 
 This preset is designed for Helm chart repositories, focusing on Kubernetes YAML files and Helm templates.
 It includes common file extensions used in Helm development and excludes directories that typically contain
@@ -440,7 +440,7 @@ essential Helm chart files while avoiding unnecessary clutter from dependencies 
 
 ## infra_only
 
-[View YAML →](./infra_only.yml)
+[View YAML →](presets/infra_only.yml)
 
 This preset is designed for infrastructure-only projects, focusing on Infrastructure as Code (IaC)
 configurations such as Terraform, Ansible, Helm, and Kubernetes YAML files. It captures essential
@@ -456,7 +456,7 @@ are included, avoiding unnecessary clutter from temporary files and build output
 
 ## java
 
-[View YAML →](./java.yml)
+[View YAML →](presets/java.yml)
 
 This preset is designed for Java projects, focusing on source files and configuration files
 used in common Java build tools like Maven and Gradle. It includes common file extensions
@@ -472,7 +472,7 @@ source files while avoiding unnecessary clutter from temporary files and build o
 
 ## kong
 
-[View YAML →](./kong.yml)
+[View YAML →](presets/kong.yml)
 
 This preset is designed for API Gateway configurations, specifically for Kong and NGINX.
 It focuses on capturing essential configuration files, Lua scripts, and related documentation,
@@ -488,7 +488,7 @@ unnecessary clutter from non-essential files.
 
 ## laravel
 
-[View YAML →](./laravel.yml)
+[View YAML →](presets/laravel.yml)
 
 This preset is designed for Laravel projects, focusing on PHP source files, Blade templates, and
 configuration files. It includes common file extensions used in Laravel development and excludes directories
@@ -503,7 +503,7 @@ source files while avoiding unnecessary clutter from temporary files and build o
 
 ## latex
 
-[View YAML →](./latex.yml)
+[View YAML →](presets/latex.yml)
 
 This preset is designed for LaTeX projects, focusing on capturing the essential source files,
 configuration files, and scripts while excluding directories that typically contain build artifacts,
@@ -521,7 +521,7 @@ configurations.
 
 ## minimal
 
-[View YAML →](./minimal.yml)
+[View YAML →](presets/minimal.yml)
 
 This preset is designed to provide a minimal configuration suitable for various projects.
 It focuses on capturing essential source files and configuration files while excluding
@@ -540,7 +540,7 @@ JavaScript, and general software development.
 
 ## monorepo
 
-[View YAML →](./monorepo.yml)
+[View YAML →](presets/monorepo.yml)
 
 This preset is designed for monorepos that contain multiple languages or tools. It captures
 essential source files, configuration files, and scripts while excluding directories that
@@ -555,7 +555,7 @@ is flexible to accommodate various programming languages and tools commonly foun
 
 ## phoenix
 
-[View YAML →](./phoenix.yml)
+[View YAML →](presets/phoenix.yml)
 
 This preset is designed for Elixir projects, particularly those using the Phoenix framework. 
 It focuses on capturing the essential source files, configuration files, and scripts while 
@@ -570,7 +570,7 @@ configurations. The preset is tailored to ensure that the core Elixir files,
 
 ## python
 
-[View YAML →](./python.yml)
+[View YAML →](presets/python.yml)
 
 This preset is designed for pure Python projects, focusing on source files, configuration files,
 and scripts. It includes common file extensions used in Python development and excludes directories
@@ -585,7 +585,7 @@ source files while avoiding unnecessary clutter from temporary files and build o
 
 ## rails
 
-[View YAML →](./rails.yml)
+[View YAML →](presets/rails.yml)
 
 This preset is designed for Ruby on Rails projects. It focuses on capturing the essential
 source files, configuration files, and scripts while excluding directories that typically contain
@@ -603,7 +603,7 @@ and temporary files.
 
 ## react
 
-[View YAML →](./react.yml)
+[View YAML →](presets/react.yml)
 
 This preset is designed for React projects, focusing on JavaScript and TypeScript source files,
 along with HTML and CSS files. It includes common file extensions used in React development and excludes
@@ -618,7 +618,7 @@ source files while avoiding unnecessary clutter from temporary files and build o
 
 ## reactnative
 
-[View YAML →](./reactnative.yml)
+[View YAML →](presets/reactnative.yml)
 
 This preset is designed for React Native or Ionic applications, focusing on JavaScript and TypeScript
 source files, along with HTML and CSS files. It includes common file extensions used in React Native and Ionic development
@@ -634,7 +634,7 @@ and build outputs.
 
 ## review_only
 
-[View YAML →](./review_only.yml)
+[View YAML →](presets/review_only.yml)
 
 This preset is designed for code review purposes, focusing on source files and configuration files
 while excluding directories that typically contain build artifacts, dependencies, or large data files.
@@ -651,7 +651,7 @@ non-essential directories.
 
 ## rust
 
-[View YAML →](./rust.yml)
+[View YAML →](presets/rust.yml)
 
 This preset is tailored for Rust projects using Cargo as the build system. It focuses on capturing
 the essential source files, configuration files, and scripts while excluding directories that typically
@@ -669,7 +669,7 @@ and IDE configurations.
 
 ## solidity
 
-[View YAML →](./solidity.yml)
+[View YAML →](presets/solidity.yml)
 
 This preset is designed for Solidity projects, particularly those involving smart contracts on blockchain platforms.
 It focuses on capturing the essential source files, configuration files, and scripts while excluding directories
@@ -687,7 +687,7 @@ and IDE configurations.
 
 ## splunkapp
 
-[View YAML →](./splunkapp.yml)
+[View YAML →](presets/splunkapp.yml)
 
 This preset is tailored for Python-based Splunk apps, such as modular inputs or apps created
 using the Add-on Builder. It focuses on capturing essential Python source files, configuration files,
@@ -703,7 +703,7 @@ and script files, are included while avoiding unnecessary clutter from temporary
 
 ## terraform
 
-[View YAML →](./terraform.yml)
+[View YAML →](presets/terraform.yml)
 
 This preset is designed for Terraform projects, focusing on capturing the essential
 source files, configuration files, and scripts while excluding directories that typically contain
@@ -721,7 +721,7 @@ and IDE configurations.
 
 ## tests_only
 
-[View YAML →](./tests_only.yml)
+[View YAML →](presets/tests_only.yml)
 
 This preset is designed for capturing test files and configurations across various programming languages.
 It includes common file extensions used in testing and configuration files, while excluding directories
@@ -739,7 +739,7 @@ directories.
 
 ## typescript_node
 
-[View YAML →](./typescript_node.yml)
+[View YAML →](presets/typescript_node.yml)
 
 This preset is designed for Node.js applications using TypeScript. It focuses on capturing the essential
 source files, configuration files, and scripts while excluding directories that typically contain
@@ -758,7 +758,7 @@ that the essential files are captured for analysis or deployment while maintaini
 
 ## unity
 
-[View YAML →](./unity.yml)
+[View YAML →](presets/unity.yml)
 
 This preset is tailored for Unity game projects, focusing on C# scripts, Unity YAML files,
 and configuration files. It includes common file extensions used in Unity development and excludes directories
@@ -773,7 +773,7 @@ source files while avoiding unnecessary clutter from temporary files and build o
 
 ## unreal
 
-[View YAML →](./unreal.yml)
+[View YAML →](presets/unreal.yml)
 
 This preset is designed for Unreal Engine projects, focusing on C++ source files, configuration files,
 and Unreal-specific files. It includes common file extensions used in Unreal Engine development and excludes directories
@@ -790,7 +790,7 @@ while excluding directories that are not relevant to the source code, such as bu
 
 ## vue
 
-[View YAML →](./vue.yml)
+[View YAML →](presets/vue.yml)
 
 This preset is designed for Vue.js projects, focusing on capturing the essential source files,
 configuration files, and scripts while excluding directories that typically contain build artifacts,
@@ -807,7 +807,7 @@ excludes directories that are not relevant to the source code, such as build dir
 
 ## webapp
 
-[View YAML →](./webapp.yml)
+[View YAML →](presets/webapp.yml)
 
 This preset is tailored for Python web applications, including frameworks like FastAPI, Django, and Flask.
 It focuses on capturing the essential source files, templates, static files, and configuration files
