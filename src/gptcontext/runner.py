@@ -60,15 +60,25 @@ def run(args, cfg, base_path: Path):
     gim = GitignoreManager(base_path)
     spec = gim.load_spec()
 
+    # Combine config excludes with any passed via -x/--exclude
+    cfg_excludes = cfg.get("exclude", [])
+    cli_excludes = args.exclude or []
+    combined_excludes = list(cfg_excludes) + cli_excludes
+
     exclude_matcher = ExcludeMatcher(
-        patterns=cfg.get("exclude", []),
+        patterns=combined_excludes,
         use_default_excludes=cfg.get("use_default_excludes", True),
     )
+
+    # Combine config include_exts with CLI args
+    cfg_includes = cfg.get("include_exts", set())
+    cli_includes = set(args.include or [])
+    combined_includes = set(cfg_includes) | cli_includes
 
     scanner = FileScanner(
         repo_root=base_path,
         scan_root=scan_root,
-        include_exts=cfg.get("include_exts", set()),
+        include_exts=combined_includes,
         exclude_matcher=exclude_matcher,
         skip_files={cfg.CONTEXT_OUTPUT_FILENAME, cfg.MESSAGE_OUTPUT_FILENAME},
         gitignore_spec=spec,

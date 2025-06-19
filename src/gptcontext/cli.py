@@ -25,8 +25,24 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-dir", "-o", type=str, help="Root directory for .gptcontext output"
     )
+    parser.add_argument(
+        "--exclude",
+        "-x",
+        nargs="+",
+        metavar="PATTERN",
+        help="Additional glob/literal patterns to exclude (e.g. '*.md', 'tmp/**')",
+    )
+    parser.add_argument(
+        "-i",
+        "--include",
+        nargs="+",
+        metavar="EXT",
+        help="Additional file extensions to include (e.g. .md, .txt)",
+    )
 
-    parser.add_argument("--max-tokens", type=int, default=None, help="Maximum total tokens in context")
+    parser.add_argument(
+        "--max-tokens", type=int, default=None, help="Maximum total tokens in context"
+    )
     parser.add_argument(
         "--file-token-threshold", type=int, help="Threshold to summarize large files"
     )
