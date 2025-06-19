@@ -2,8 +2,8 @@
 """
 generate_presets_md.py
 
-Scan presets/*.yml and produce a PRESETS.md file there,
-with a table of presets, and for each preset a detailed section.
+Scan src/gptcontext/presets/*.yml and produce a PRESETS.md file there,
+with a table of presets and, for each preset, a detailed section (with a TOC link).
 """
 
 import yaml
@@ -19,7 +19,6 @@ def load_preset(path: Path):
       - long:  data['long_description']  or data['description'] or ''
       - include_exts: list from data['include_exts'] (or [])
       - exclude: list from data['exclude']      (or [])
-      - raw: full YAML dict
     """
     data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     name = path.stem
@@ -34,7 +33,6 @@ def load_preset(path: Path):
         "long": long_desc,
         "include_exts": include_exts,
         "exclude": exclude,
-        "raw": data,
     }
 
 def main():
@@ -44,13 +42,12 @@ def main():
         print(f"Error: presets directory not found at {presets_dir}", file=sys.stderr)
         sys.exit(1)
 
-    out_path = presets_dir / "PRESETS.md"
+    out_path = repo_root / "PRESETS.md"
 
     # collect all .yml presets
     files = sorted(presets_dir.glob("*.yml"))
     presets = [ load_preset(p) for p in files ]
 
-    # --- Build the markdown ---
     lines = []
 
     # Title
@@ -65,39 +62,28 @@ def main():
     lines.append("| Preset | Short Description |")
     lines.append("| ------ | ----------------- |")
     for p in presets:
-        lines.append(
-            f"| [{p['name']}](#{p['name']}) | {p['short']} |"
-        )
+        lines.append(f"| [{p['name']}](#{p['name']}) | {p['short']} |")
     lines.append("")
 
     # Detailed sections
     for p in presets:
         lines.append(f"## {p['name']}\n")
         # link to file
-        lines.append(
-            f"[View YAML →](./{p['filename']})\n"
-        )
+        lines.append(f"[View YAML →](./{p['filename']})\n")
         # long description
         if p["long"]:
             lines.append(f"{p['long']}\n")
         # includes
-        inc = p["include_exts"]
-        if inc:
-            inc_list = ", ".join(f"`{e}`" for e in inc)
+        if p["include_exts"]:
+            inc_list = ", ".join(f"`{e}`" for e in p["include_exts"])
             lines.append(f"**Include extensions:** {inc_list}\n")
         # excludes
-        exc = p["exclude"]
-        if exc:
-            exc_list = ", ".join(f"`{e}`" for e in exc)
+        if p["exclude"]:
+            exc_list = ", ".join(f"`{e}`" for e in p["exclude"])
             lines.append(f"**Exclude patterns:** {exc_list}\n")
-        # full raw YAML
-        lines.append("```yaml")
-        # preserve key order if any
-        dumped = yaml.dump(p["raw"], sort_keys=False).rstrip()
-        lines.append(dumped)
-        lines.append("```\n")
+        # back to TOC
+        lines.append("[Back to Table of presets](#table-of-presets)\n")
 
-    # Write out
     out_path.write_text("\n".join(lines), encoding="utf-8")
     print(f"Wrote {out_path.relative_to(repo_root)}")
 
