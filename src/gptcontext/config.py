@@ -12,6 +12,8 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 
 # Default configuration values
 _DEFAULT_CONFIG = {
+    "description": "",
+    "long_description": "",
     # Maximum total number of tokens allowed in the final context output
     "MAX_TOTAL_TOKENS": 12000,
     # Per-file token threshold; if a file exceeds this, it will be summarized (if --summarize is enabled)

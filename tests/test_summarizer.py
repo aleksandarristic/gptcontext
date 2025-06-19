@@ -12,10 +12,13 @@ def dummy_openai(monkeypatch):
         def create(self, model, messages, temperature):
             class Msg:
                 content = "dummy summary"
+
             class Choice:
                 message = Msg()
+
             class Response:
                 choices = [Choice()]
+
             return Response()
 
     class FakeChat:

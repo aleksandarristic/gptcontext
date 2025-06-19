@@ -140,7 +140,7 @@ class ContextBuilder:
               - summary_count (int, number of files included as summaries),
               - failed_count (int, number of files that failed to process)
         """
-        logger.info(f"✓ Building context from {len(files)} files (parallel loading)...")
+        logger.info(f"✓ Building context from {len(files)} files...")
 
         # Parallel read + token count
         with concurrent.futures.ThreadPoolExecutor() as executor:

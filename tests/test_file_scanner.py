@@ -13,6 +13,7 @@ def setup_config(tmp_path, monkeypatch):
     config.init_config(tmp_path)
     return tmp_path
 
+
 @pytest.fixture
 def create_repo(setup_config):
     base = setup_config
@@ -28,6 +29,7 @@ def create_repo(setup_config):
     gitignore.write_text("ignored.md")
     (base / "ignored.md").write_text("# ignore")
     return base
+
 
 def test_list_files_filters(create_repo):
     base = create_repo

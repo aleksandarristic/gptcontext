@@ -223,25 +223,25 @@ def main():
 
     # Resolve paths and config
     base_path = Path(args.base).resolve()
-
+    package_root = Path(__file__).parent.parent.parent.resolve()
     config_path = None
     if args.config_file:
-        candidate_paths = [
-            Path(__file__).parent / args.config_file,
-            base_path / args.config_file,
-        ]
-        if args.scan_dir:
-            candidate_paths.append((base_path / args.scan_dir) / args.config_file)
+        cf = Path(args.config_file)
 
-        for path in candidate_paths:
-            if path.exists():
-                config_path = path.resolve()
-                break
+        # A) look under project base
+        cand = base_path / cf
+        if cand.is_file():
+            config_path = cand.resolve()
+        else:
+            # B) look under the package root
+            cand = package_root / cf
+            if cand.is_file():
+                config_path = cand.resolve()
 
         if not config_path:
-            logger.error("ERROR: Config file not found in expected locations:")
-            for p in candidate_paths:
-                logger.error(f"  - {p}")
+            logger.error("ERROR: Config file not found in either:")
+            logger.error(f"  • Project base: {base_path / cf}")
+            logger.error(f"  • Package root: {package_root / cf}")
             sys.exit(1)
 
     config.init_config(base_path, config_path) if config_path else config.init_config(base_path)
