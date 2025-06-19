@@ -2,7 +2,7 @@
 """
 generate_presets_md.py
 
-Scan src/gptcontext/presets/*.yml and produce a PRESETS.md file there,
+Scan presets/*.yml and produce a PRESETS.md file there,
 with a table of presets, and for each preset a detailed section.
 """
 
@@ -39,7 +39,7 @@ def load_preset(path: Path):
 
 def main():
     repo_root = Path(__file__).parent
-    presets_dir = repo_root / "src" / "gptcontext" / "presets"
+    presets_dir = repo_root / "presets"
     if not presets_dir.is_dir():
         print(f"Error: presets directory not found at {presets_dir}", file=sys.stderr)
         sys.exit(1)
