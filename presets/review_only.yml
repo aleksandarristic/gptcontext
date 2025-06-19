@@ -3,6 +3,14 @@
 MAX_TOTAL_TOKENS: 12000
 MAX_FILE_TOKENS: 4000
 
+description: Review only preset for code projects
+long_description: |
+  This preset is designed for code review purposes, focusing on source files and configuration files
+  while excluding directories that typically contain build artifacts, dependencies, or large data files.
+  It is tailored to ensure that only the essential files needed for code review are included, avoiding
+  unnecessary clutter from temporary files, build outputs, and large assets. This preset is ideal for
+  reviewing code changes, configurations, and scripts without the overhead of large data files or
+  non-essential directories.
 
 exclude:
 - .git/

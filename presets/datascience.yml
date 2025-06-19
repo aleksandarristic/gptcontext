@@ -3,6 +3,12 @@
 MAX_TOTAL_TOKENS: 15000
 MAX_FILE_TOKENS: 4000
 
+description: Python Data Science / ML / Notebook project
+long_description: |
+  This preset is designed for Python-based data science, machine learning, and notebook projects.
+  It focuses on capturing essential Python scripts, Jupyter notebooks, configuration files, and data files
+  while excluding directories that typically contain virtual environments, temporary files, or IDE-specific 
+  configurations.
 
 exclude:
 - .git/

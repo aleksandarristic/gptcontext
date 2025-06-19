@@ -3,6 +3,11 @@
 MAX_TOTAL_TOKENS: 15000
 MAX_FILE_TOKENS: 4000
 
+description: Backend app only — API / server code
+long_description: |
+  This preset is designed for backend applications, focusing on server-side code and API implementations.
+  It includes common file extensions used in backend development across various languages such as Python, Go,
+  Java, Kotlin, Rust, C/C++, C#, PHP, Ruby, and more.
 
 exclude:
 - .git/

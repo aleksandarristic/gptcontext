@@ -3,6 +3,12 @@
 MAX_TOTAL_TOKENS: 20000
 MAX_FILE_TOKENS: 5000
 
+description: Maximum code coverage — capture ALL source-like files
+long_description: |
+  This preset is designed to capture a wide range of source code files across various programming languages and formats.
+  It includes common extensions for languages like Python, JavaScript, TypeScript, Go, Java, Kotlin, Rust, C/C++, C#, Swift,
+  PHP, Ruby, Perl, Shell scripts, SQL, Terraform, YAML, JSON, XML, HTML, CSS, and more.
+  The preset also excludes common directories that typically contain build artifacts or dependencies.
 
 exclude:
 - .git/

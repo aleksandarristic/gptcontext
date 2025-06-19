@@ -3,6 +3,15 @@
 MAX_TOTAL_TOKENS: 12000
 MAX_FILE_TOKENS: 4000
 
+description: Tests only — capture test files and configs
+long_description: |
+  This preset is designed for capturing test files and configurations across various programming languages.
+  It includes common file extensions used in testing and configuration files, while excluding directories
+  that typically contain source code, build artifacts, or other non-essential files. The preset is tailored
+  to ensure that the core test files, along with relevant configuration files, are included while avoiding
+  unnecessary clutter from source code and build outputs. It includes common file extensions used in testing
+  and excludes directories that are not relevant to the test files, such as source directories and build
+  directories.
 
 exclude:
 - .git/

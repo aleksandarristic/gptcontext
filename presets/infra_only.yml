@@ -3,6 +3,13 @@
 MAX_TOTAL_TOKENS: 15000
 MAX_FILE_TOKENS: 4000
 
+description: Infra only — IaC configs (Terraform, Ansible, Helm, K8s YAML)
+long_description: |
+  This preset is designed for infrastructure-only projects, focusing on Infrastructure as Code (IaC)
+  configurations such as Terraform, Ansible, Helm, and Kubernetes YAML files. It captures essential
+  configuration files while excluding directories that typically contain build artifacts, dependencies,
+  or IDE-specific configurations. The preset is designed to ensure that only relevant infrastructure files
+  are included, avoiding unnecessary clutter from temporary files and build outputs.
 
 exclude:
 - .git/

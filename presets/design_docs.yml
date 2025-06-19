@@ -3,6 +3,12 @@
 MAX_TOTAL_TOKENS: 20000
 MAX_FILE_TOKENS: 5000
 
+description: Design docs only — textual / documentation content
+long_description: |
+  This preset is tailored for design documents and textual content, focusing on formats commonly used for documentation
+  and design specifications. It includes common file extensions used in documentation while excluding directories
+  that typically contain code, build artifacts, or other non-documentation files. The preset is designed to capture the essential
+  textual content while avoiding unnecessary clutter from code repositories or temporary files.
 
 exclude:
 - .git/

@@ -9,6 +9,8 @@ import textwrap
 from pathlib import Path
 from typing import OrderedDict
 
+import yaml
+
 import gptcontext.config as config
 from gptcontext.runner import run
 
@@ -16,9 +18,22 @@ logger = logging.getLogger(__name__)
 
 
 def parse_args() -> argparse.Namespace:
+    # We define prog and usage so the help shows “gptcontext [OPTIONS]”
+    # add_help=False so we can inject -h/--help into our own group
     parser = argparse.ArgumentParser(
-        description="Generate GPT context from codebase.",
+        prog="gptcontext",
+        usage="gptcontext [OPTIONS]",
+        description=textwrap.dedent("""\
+            Generate GPT context from your codebase.
+                                    
+            This tool scans your project files, applies filtering, and optionally summarizes
+            large files using one of the summarizer (included: simple, openai). It generates 
+            a context file that can be used for various purposes, such as building AI chatbots 
+            or providing context to LLMs.
+
+        """),
         formatter_class=argparse.RawDescriptionHelpFormatter,
+        add_help=False,
         epilog=textwrap.dedent("""\
             CONFIGURATION RESOLUTION ORDER:
               1. If you pass --config-file <name>, it tries in this sequence:
@@ -29,68 +44,135 @@ def parse_args() -> argparse.Namespace:
               3. If none is found, it falls back to built-in defaults.
 
             PRESETS:
-              You can ship YAML presets under `presets/` and load one via:
+              There is a number of YAML presets included under "presets/" and you can load one via:
                 gptcontext --config-file presets/<preset-name>.yml
+                
+              You can list presets with:
+                gptcontext --list-presets 
+              
+              or print a specific one with:
+                gptcontext --show-preset <preset-name>
+                               
 
-              Provided examples:
-                • default   Default GPTContext settings
-                • python    Pure Python project
-                • frontend  Frontend (JS/React) focus
-                • backend   Backend (API/server) focus
+            EXAMPLES:
+              # Scan current directory with default settings:
+              gptcontext
+
+              # Scan project, include .md files and exclude .log files:
+              gptcontext -i .md -x "*.log"
+
+              # Summarize large files via OpenAI (threshold 3000 tokens):
+              gptcontext --summarize --file-token-threshold 3000
+
+              # Use a built-in Python preset:
+              gptcontext -c presets/python.yml
+
+              # Generate both context and message template:
+              gptcontext --generate-message
+                               
+              # Dry run: scan and summarize, but don’t write files:
+              gptcontext --dry-run
+                               
+              # A bit more complex example with verbose logging:
+              gptcontext --base /path/to/project -c presets/python.yml
+                         -i .md -x "*.log"
+                         --summarize --file-token-threshold 2000
+                         --generate-message --verbose
+                               
+            For more details, see the documentation at https://github.com/aleksandarristic/gptcontext
         """),
     )
 
-    parser.add_argument(
-        "--config-file",
+    # ─── OPTIONS (just help) ─────────────────────────────────────────────────
+    opts = parser.add_argument_group("OPTIONS")
+    opts.add_argument("-h", "--help", action="help", help="Show this help message and exit")
+
+    # ─── Configuration ───────────────────────────────────────────────────────
+    cfg = parser.add_argument_group("Configuration")
+    cfg.add_argument(
         "-c",
-        type=str,
-        help="Path to a custom .gptcontext-config.yml. You can use presets/<name>.yml here for existing presets.",
+        "--config-file",
+        metavar="FILE",
+        help="YAML file to override defaults (e.g. presets/python.yml)",
     )
-    parser.add_argument(
-        "-L",
-        "--list-presets",
-        action="store_true",
-        help="List available configuration presets and exit",
+    cfg.add_argument(
+        "-L", "--list-presets", action="store_true", help="List bundled & local presets and exit"
     )
-    parser.add_argument("--base", "-b", default=config.BASE_DIR, help="Base directory to scan")
-    parser.add_argument("--scan-dir", "-s", type=str, help="Subdirectory to scan")
-    parser.add_argument(
-        "--output-dir", "-o", type=str, help="Root directory for .gptcontext output"
+    cfg.add_argument(
+        "-S", "--show-preset", metavar="NAME", help="Print the full YAML of <NAME> preset and exit"
     )
-    parser.add_argument(
-        "--exclude",
+
+    # ─── Input / Output ─────────────────────────────────────────────────────
+    io = parser.add_argument_group("Input / Output")
+    io.add_argument(
+        "-b",
+        "--base",
+        metavar="DIR",
+        default=config.BASE_DIR,
+        help="Directory in which to scan for files (default: .)",
+    )
+    io.add_argument("-s", "--scan-dir", metavar="DIR", help="Subdirectory under base to scan")
+    io.add_argument("-o", "--output-dir", metavar="DIR", help="Where to write .gptcontext outputs")
+
+    # ─── Filtering ───────────────────────────────────────────────────────────
+    filt = parser.add_argument_group("Filtering")
+    filt.add_argument(
         "-x",
+        "--exclude",
         nargs="+",
-        metavar="PATTERN",
-        help="Additional glob/literal patterns to exclude (e.g. '*.md', 'tmp/**')",
+        metavar="PAT",
+        help="Extra glob or literal patterns to ignore (e.g. '*.md')",
     )
-    parser.add_argument(
+    filt.add_argument(
         "-i",
         "--include",
         nargs="+",
         metavar="EXT",
-        help="Additional file extensions to include (e.g. .md, .txt)",
+        help="Extra file extensions to include (e.g. .md)",
     )
 
-    parser.add_argument(
-        "--max-tokens", type=int, default=None, help="Maximum total tokens in context"
-    )
-    parser.add_argument(
-        "--file-token-threshold", type=int, help="Threshold to summarize large files"
-    )
-    parser.add_argument(
+    # ─── Summaries & Tokens ─────────────────────────────────────────────────
+    summ = parser.add_argument_group("Summaries & Tokens")
+    summ.add_argument(
         "--summarize", action="store_true", help="Use OpenAI to summarize large files"
     )
-    parser.add_argument(
-        "--summarizer", type=str, help="Override summarizer backend (e.g., chatgpt, simple)"
+    summ.add_argument(
+        "--file-token-threshold", type=int, help="Token count above which to summarize"
     )
-    parser.add_argument("--generate-message", action="store_true", help="Write message template")
-    parser.add_argument("--output", type=str, help="Override context output file path")
-    parser.add_argument("--verbose", action="store_true", help="Enable debug logging")
-    parser.add_argument("--dry-run", action="store_true", help="Do not write any files")
-    parser.add_argument("--continue-on-error", action="store_true", help="Ignore summary failures")
+    summ.add_argument("--summarizer", metavar="NAME", help="Which summarizer backend to use")
+    summ.add_argument(
+        "--max-tokens", type=int, default=None, help="Total token budget for final context"
+    )
+    summ.add_argument(
+        "--continue-on-error",
+        action="store_true",
+        help="Ignore summarization failures and keep going",
+    )
+
+    # ─── Miscellaneous ───────────────────────────────────────────────────────
+    misc = parser.add_argument_group("Miscellaneous")
+    misc.add_argument(
+        "--generate-message", action="store_true", help="Also build a message template file"
+    )
+    misc.add_argument("--output", metavar="FILE", help="Override the context output filename")
+    misc.add_argument("--verbose", action="store_true", help="Enable debug logging")
+    misc.add_argument(
+        "--dry-run", action="store_true", help="Scan & summarize, but don’t write any files"
+    )
 
     return parser.parse_args()
+
+
+# helper to find all presets (stem -> Path to file)
+def find_presets(base_dir: str):
+    presets = OrderedDict()
+    pkg_dir = Path(__file__).parent.parent / "presets"
+    user_dir = Path(base_dir) / "presets"
+    for d in (pkg_dir, user_dir):
+        if d.is_dir():
+            for f in sorted(d.glob("*.yml")):
+                presets[f.stem] = f
+    return presets
 
 
 def main():
@@ -102,28 +184,38 @@ def main():
     )
 
     if args.list_presets:
-
-        def _find_presets(base_dir: str):
-            presets = OrderedDict()
-            # Packaged presets
-            pkg_dir = Path(__file__).parent.parent / "presets"
-            # Project-local presets
-            user_dir = Path(base_dir) / "presets"
-
-            for d in (pkg_dir, user_dir):
-                if d.is_dir():
-                    for yml in sorted(d.glob("*.yml")):
-                        presets[yml.name] = None
-            return list(presets)
-
-        names = _find_presets(args.base)
-        if names:
-            for name in names:
-                print(name)
-        else:
+        presets = find_presets(args.base)
+        if not presets:
             print("No presets found.")
+            sys.exit(0)
+
+        # compute column width based on the longest filename
+        max_len = max(len(p.name) for p in presets.values())
+        for stem, path in presets.items():
+            data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            desc = data.get("description", "No description provided")
+            # name.ljust to align descriptions
+            print(f"{path.name.ljust(max_len + 2)}{desc}")
         sys.exit(0)
 
+    if args.show_preset:
+        presets = find_presets(args.base)
+        key = args.show_preset
+
+        # this needs to be smarter, but for now we just strip common extensions
+        if key.lower().endswith(".yml"):
+            key = key[:-4]
+        if key.lower().endswith(".yaml"):
+            key = key[:-5]
+
+        path = presets.get(key)
+        if not path:
+            print(f"Preset '{args.show_preset}' not found.")
+            sys.exit(1)
+        print(path.read_text(encoding="utf-8"))
+        sys.exit(0)
+
+    # doesn't actually make sense to have this here
     # # Validate summarization requirements
     # if args.summarize and not os.getenv("OPENAI_API_KEY"):
     #     logger.error("ERROR: --summarize requires OPENAI_API_KEY environment variable")

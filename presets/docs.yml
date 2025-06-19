@@ -3,6 +3,13 @@
 MAX_TOTAL_TOKENS: 20000
 MAX_FILE_TOKENS: 4000
 
+description: Docs / static site / knowledge base
+long_description: |
+  This preset is designed for documentation, static sites, or knowledge bases. It focuses on
+  capturing essential documentation files, configuration files, and scripts while excluding directories
+  that typically contain build artifacts, dependencies, or IDE-specific configurations. The preset is tailored
+  to ensure that the core documentation files, along with relevant configuration and script files, are included
+  while avoiding unnecessary clutter from temporary files and build outputs.
 
 exclude:
 - .git/

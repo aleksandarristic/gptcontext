@@ -3,6 +3,11 @@
 MAX_TOTAL_TOKENS: 12000
 MAX_FILE_TOKENS: 4000
 
+description: GitHub Actions / CI/CD repo
+long_description: |
+  This preset is designed for GitHub Actions and CI/CD repositories, focusing on YAML files
+  and configuration files. It includes common file extensions used in CI/CD workflows and excludes
+  directories that typically contain build artifacts, dependencies, or IDE-specific configurations.
 
 exclude:
 - .git/

@@ -3,6 +3,12 @@
 MAX_TOTAL_TOKENS: 12000
 MAX_FILE_TOKENS: 3000
 
+description: Ansible playbook / role repo
+long_description: |
+  This preset is designed for Ansible playbooks and roles, focusing on YAML files and Jinja2 templates.
+  It includes common file extensions used in Ansible development and excludes directories that typically
+  contain temporary files, artifacts, or IDE-specific configurations. The preset is tailored to capture the
+  essential source files while avoiding unnecessary clutter from dependencies and build outputs.
 
 exclude:
 - .git/

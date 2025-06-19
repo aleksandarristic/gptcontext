@@ -10,6 +10,13 @@ GPTCONTEXT_CACHE_DIRNAME: ".gptcontext-cache"
 OPENAI_MODEL: "gpt-3.5-turbo"
 ENCODING_NAME: "cl100k_base"
 
+description: Default preset for GPTContext
+long_description: |
+  This preset is designed to capture a wide range of file types and configurations
+  commonly found in software projects. It includes various programming languages, configuration files,
+  and documentation formats, while excluding directories that typically contain build artifacts,
+  dependencies, or IDE-specific configurations. The preset aims to provide a comprehensive context
+  for understanding the project without unnecessary clutter from temporary files or non-essential directories.
 
 exclude:
 - .git/

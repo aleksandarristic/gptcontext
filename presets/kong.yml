@@ -3,6 +3,13 @@
 MAX_TOTAL_TOKENS: 12000
 MAX_FILE_TOKENS: 4000
 
+description: API Gateway / Kong / NGINX config repo
+long_description: |
+  This preset is designed for API Gateway configurations, specifically for Kong and NGINX.
+  It focuses on capturing essential configuration files, Lua scripts, and related documentation,
+  while excluding directories that typically contain logs, temporary files, or IDE-specific configurations.
+  The preset is tailored to ensure that the core configuration files and scripts are included while avoiding
+  unnecessary clutter from non-essential files.
 
 exclude:
 - .git/

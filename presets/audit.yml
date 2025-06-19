@@ -3,6 +3,11 @@
 MAX_TOTAL_TOKENS: 15000
 MAX_FILE_TOKENS: 4000
 
+description: Optimized for security audit — show configs, envs, keys, secrets
+long_description: |
+  This preset is designed for security audits, focusing on configuration files, environment variables,
+  keys, and secrets. It includes common file extensions used for configuration and environment files,
+  while excluding directories that typically contain build artifacts, dependencies, or other non-essential files.
 
 exclude:
 - .git/

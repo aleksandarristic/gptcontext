@@ -2,6 +2,12 @@
 MAX_TOTAL_TOKENS: 12000
 MAX_FILE_TOKENS: 5000
 
+description: Pure Python project
+long_description: |
+  This preset is designed for pure Python projects, focusing on source files, configuration files,
+  and scripts. It includes common file extensions used in Python development and excludes directories
+  that typically contain build artifacts, dependencies, or IDE-specific configurations. The preset is designed to capture the essential
+  source files while avoiding unnecessary clutter from temporary files and build outputs.
 
 exclude:
 - .git/

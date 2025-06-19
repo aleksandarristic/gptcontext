@@ -3,6 +3,13 @@
 MAX_TOTAL_TOKENS: 15000
 MAX_FILE_TOKENS: 4000
 
+description: .NET Core project (C# + configs)
+long_description: |
+  This preset is designed for .NET Core projects, focusing on C# source files, 
+  configuration files, and project files. It includes common file extensions used 
+  in .NET development and excludes directories that typically contain build artifacts, 
+  dependencies, or IDE-specific configurations. The preset is designed to capture the
+  essential source files while avoiding unnecessary clutter from temporary files and build outputs.
 
 exclude:
 - .git/

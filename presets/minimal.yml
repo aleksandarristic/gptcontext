@@ -3,6 +3,16 @@
 MAX_TOTAL_TOKENS: 8000
 MAX_FILE_TOKENS: 2000
 
+description: Minimal config — safest default, good as a base template
+long_description: |
+  This preset is designed to provide a minimal configuration suitable for various projects.
+  It focuses on capturing essential source files and configuration files while excluding
+  directories that typically contain build artifacts, dependencies, or IDE-specific configurations.
+  The preset is tailored to ensure that core files are included while avoiding unnecessary clutter
+  from temporary files and build outputs. It includes common file extensions used in many projects
+  and excludes directories that are not relevant to the source code, such as build directories and IDE
+  configurations. This makes it a good starting point for various types of projects, including Python,
+  JavaScript, and general software development.
 
 exclude:
 - .git/

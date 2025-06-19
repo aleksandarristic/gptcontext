@@ -3,6 +3,15 @@
 MAX_TOTAL_TOKENS: 15000
 MAX_FILE_TOKENS: 4000
 
+description: Ruby on Rails project
+long_description: |
+  This preset is designed for Ruby on Rails projects. It focuses on capturing the essential
+  source files, configuration files, and scripts while excluding directories that typically contain
+  build artifacts, dependencies, or IDE-specific configurations. The preset is tailored to ensure that
+  the core Ruby files, along with relevant configuration and script files, are included while avoiding
+  unnecessary clutter from temporary files and build outputs. It includes common file extensions used in
+  Rails projects and excludes directories that are not relevant to the source code, such as log files
+  and temporary files.
 
 exclude:
 - .git/

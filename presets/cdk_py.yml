@@ -3,6 +3,13 @@
 MAX_TOTAL_TOKENS: 15000
 MAX_FILE_TOKENS: 4000
 
+description: AWS CDK — Python project
+long_description: |
+  This preset is designed for AWS CDK projects using Python. It focuses on capturing the essential
+  source files, configuration files, and scripts while excluding directories that typically contain
+  build artifacts, dependencies, or IDE-specific configurations. The preset is tailored to ensure that
+  the core Python files, along with relevant configuration and script files, are included while avoiding
+  unnecessary clutter from temporary files and build outputs.
 
 exclude:
 - .git/

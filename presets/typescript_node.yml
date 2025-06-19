@@ -3,6 +3,16 @@
 MAX_TOTAL_TOKENS: 15000
 MAX_FILE_TOKENS: 4000
 
+description: Node.js / TypeScript app
+long_description: |
+  This preset is designed for Node.js applications using TypeScript. It focuses on capturing the essential
+  source files, configuration files, and scripts while excluding directories that typically contain
+  build artifacts, dependencies, or IDE-specific configurations. The preset is tailored to ensure that
+  the core TypeScript files, along with relevant configuration and script files, are included while avoiding
+  unnecessary clutter from temporary files and build outputs. It includes common file extensions used in Node.js
+  projects and excludes directories that are not relevant to the source code, such as build directories
+  and IDE configurations. This preset is ideal for applications that utilize TypeScript for development, ensuring
+  that the essential files are captured for analysis or deployment while maintaining a clean project structure.
 
 exclude:
 - .git/

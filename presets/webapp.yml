@@ -3,6 +3,15 @@
 MAX_TOTAL_TOKENS: 15000
 MAX_FILE_TOKENS: 4000
 
+description: Python webapp (FastAPI, Django, Flask, etc.)
+long_description: |
+  This preset is tailored for Python web applications, including frameworks like FastAPI, Django, and Flask.
+  It focuses on capturing the essential source files, templates, static files, and configuration files
+  while excluding directories that typically contain build artifacts, dependencies, or IDE-specific configurations.
+  The preset is designed to ensure that the core Python files, along with relevant HTML templates,
+  JavaScript, CSS, and configuration files, are included while avoiding unnecessary clutter from temporary files
+  and build outputs. It includes common file extensions used in Python web applications and excludes directories
+  that are not relevant to the source code, such as virtual environments, build directories, and IDE configurations.
 
 exclude:
 - .git/

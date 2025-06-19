@@ -3,6 +3,13 @@
 MAX_TOTAL_TOKENS: 12000
 MAX_FILE_TOKENS: 4000
 
+description: Clojure project (Leiningen / deps.edn / Babashka)
+long_description: |
+  This preset is tailored for Clojure projects, focusing on source files and configuration files
+  used in common Clojure build tools like Leiningen and deps.edn. It includes common file extensions
+  used in Clojure development and excludes directories that typically contain build artifacts,
+  dependencies, or IDE-specific configurations. The preset is designed to capture the essential
+  source files while avoiding unnecessary clutter from temporary files and build outputs.
 
 exclude:
 - .git/

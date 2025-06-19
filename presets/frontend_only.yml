@@ -3,6 +3,11 @@
 MAX_TOTAL_TOKENS: 15000
 MAX_FILE_TOKENS: 4000
 
+description: Frontend app only — React, Vue, JS/TS
+long_description: |
+  This preset is designed for frontend applications, focusing on JavaScript and TypeScript codebases.
+  It includes common file extensions used in modern frontend development, such as React and Vue components,
+  and excludes directories that typically contain build artifacts, dependencies, or IDE-specific configurations.
 
 exclude:
 - .git/
