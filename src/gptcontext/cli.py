@@ -166,12 +166,17 @@ def parse_args() -> argparse.Namespace:
 # helper to find all presets (stem -> Path to file)
 def find_presets(base_dir: str):
     presets = OrderedDict()
-    pkg_dir = Path(__file__).parent.parent / "presets"
-    user_dir = Path(base_dir) / "presets"
+    repo_root = Path(__file__).resolve().parents[2]
+    pkg_dir = repo_root / "presets"
+    user_dir = Path(base_dir).expanduser().resolve() / "presets"
+
+    seen = set()
     for d in (pkg_dir, user_dir):
         if d.is_dir():
             for f in sorted(d.glob("*.yml")):
-                presets[f.stem] = f
+                if f.stem not in seen:
+                    presets[f.stem] = f
+                    seen.add(f.stem)
     return presets
 
 
